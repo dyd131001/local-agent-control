@@ -1,0 +1,25 @@
+{
+  "test": "Phase 1 live HTTP/browser/SDK acceptance",
+  "root": "/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/control-center-live-ask42wbk",
+  "checks": [
+    {
+      "name": "ChatGPT authentication reused",
+      "passed": true
+    },
+    {
+      "name": "Runtime model/reasoning catalog",
+      "passed": true,
+      "count": 7
+    },
+    {
+      "name": "Category and Work created from browser",
+      "passed": true
+    },
+    {
+      "name": "Browser request returns 202",
+      "passed": true
+    }
+  ],
+  "passed": false,
+  "error": "Actual Codex Turn completed: {\"status\": \"FAILED\"}"
+}

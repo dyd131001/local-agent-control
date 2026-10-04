@@ -1,0 +1,1357 @@
+[
+  {
+    "case": "environment",
+    "time": 1790605908.386055,
+    "python": "3.10.2",
+    "os": "macOS-14.7.8-x86_64-i386-64bit",
+    "sdk": "0.158.0",
+    "runtime": "0.158.0",
+    "work": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work"
+  },
+  {
+    "case": "initialize",
+    "time": 1790605909.089341,
+    "metadata": {
+      "serverInfo": {
+        "name": "ai_control_runtime_probe",
+        "version": "0.158.0 (Mac OS 14.7.8; x86_64) Apple_Terminal (ai_control_runtime_probe; 0.158.0)"
+      },
+      "userAgent": "ai_control_runtime_probe/0.158.0 (Mac OS 14.7.8; x86_64) Apple_Terminal (ai_control_runtime_probe; 0.158.0)",
+      "platformFamily": "unix",
+      "platformOs": "macos"
+    }
+  },
+  {
+    "case": "account",
+    "time": 1790605910.158089,
+    "account_type": "chatgpt",
+    "connected": true,
+    "requires_openai_auth": true
+  },
+  {
+    "case": "models",
+    "time": 1790605910.171268,
+    "models": [
+      {
+        "id": "gpt-6-astra",
+        "model": "gpt-6-astra",
+        "isDefault": true,
+        "defaultReasoningEffort": "low",
+        "supportedReasoningEfforts": [
+          {
+            "description": "Fast responses with lighter reasoning",
+            "reasoningEffort": "low"
+          },
+          {
+            "description": "Balances speed and reasoning depth for everyday tasks",
+            "reasoningEffort": "medium"
+          },
+          {
+            "description": "Greater reasoning depth for complex problems",
+            "reasoningEffort": "high"
+          },
+          {
+            "description": "Extra high reasoning depth for complex problems",
+            "reasoningEffort": "xhigh"
+          },
+          {
+            "description": "Maximum reasoning depth for the hardest problems",
+            "reasoningEffort": "max"
+          },
+          {
+            "description": "Maximum reasoning with automatic task delegation",
+            "reasoningEffort": "ultra"
+          }
+        ]
+      },
+      {
+        "id": "gpt-6-sol",
+        "model": "gpt-6-sol",
+        "isDefault": false,
+        "defaultReasoningEffort": "low",
+        "supportedReasoningEfforts": [
+          {
+            "description": "Fast responses with lighter reasoning",
+            "reasoningEffort": "low"
+          },
+          {
+            "description": "Balances speed and reasoning depth for everyday tasks",
+            "reasoningEffort": "medium"
+          },
+          {
+            "description": "Greater reasoning depth for complex problems",
+            "reasoningEffort": "high"
+          },
+          {
+            "description": "Extra high reasoning depth for complex problems",
+            "reasoningEffort": "xhigh"
+          },
+          {
+            "description": "Maximum reasoning depth for the hardest problems",
+            "reasoningEffort": "max"
+          },
+          {
+            "description": "Maximum reasoning with automatic task delegation",
+            "reasoningEffort": "ultra"
+          }
+        ]
+      },
+      {
+        "id": "gpt-6-luna",
+        "model": "gpt-6-luna",
+        "isDefault": false,
+        "defaultReasoningEffort": "medium",
+        "supportedReasoningEfforts": [
+          {
+            "description": "Fast responses with lighter reasoning",
+            "reasoningEffort": "low"
+          },
+          {
+            "description": "Balances speed and reasoning depth for everyday tasks",
+            "reasoningEffort": "medium"
+          },
+          {
+            "description": "Greater reasoning depth for complex problems",
+            "reasoningEffort": "high"
+          },
+          {
+            "description": "Extra high reasoning depth for complex problems",
+            "reasoningEffort": "xhigh"
+          },
+          {
+            "description": "Maximum reasoning depth for the hardest problems",
+            "reasoningEffort": "max"
+          }
+        ]
+      },
+      {
+        "id": "gpt-5.6-sol",
+        "model": "gpt-5.6-sol",
+        "isDefault": false,
+        "defaultReasoningEffort": "low",
+        "supportedReasoningEfforts": [
+          {
+            "description": "Fast responses with lighter reasoning",
+            "reasoningEffort": "low"
+          },
+          {
+            "description": "Balances speed and reasoning depth for everyday tasks",
+            "reasoningEffort": "medium"
+          },
+          {
+            "description": "Greater reasoning depth for complex problems",
+            "reasoningEffort": "high"
+          },
+          {
+            "description": "Extra high reasoning depth for complex problems",
+            "reasoningEffort": "xhigh"
+          },
+          {
+            "description": "Maximum reasoning depth for the hardest problems",
+            "reasoningEffort": "max"
+          },
+          {
+            "description": "Maximum reasoning with automatic task delegation",
+            "reasoningEffort": "ultra"
+          }
+        ]
+      },
+      {
+        "id": "gpt-5.6-terra",
+        "model": "gpt-5.6-terra",
+        "isDefault": false,
+        "defaultReasoningEffort": "medium",
+        "supportedReasoningEfforts": [
+          {
+            "description": "Fast responses with lighter reasoning",
+            "reasoningEffort": "low"
+          },
+          {
+            "description": "Balances speed and reasoning depth for everyday tasks",
+            "reasoningEffort": "medium"
+          },
+          {
+            "description": "Greater reasoning depth for complex problems",
+            "reasoningEffort": "high"
+          },
+          {
+            "description": "Extra high reasoning depth for complex problems",
+            "reasoningEffort": "xhigh"
+          },
+          {
+            "description": "Maximum reasoning depth for the hardest problems",
+            "reasoningEffort": "max"
+          },
+          {
+            "description": "Maximum reasoning with automatic task delegation",
+            "reasoningEffort": "ultra"
+          }
+        ]
+      },
+      {
+        "id": "gpt-5.6-luna",
+        "model": "gpt-5.6-luna",
+        "isDefault": false,
+        "defaultReasoningEffort": "medium",
+        "supportedReasoningEfforts": [
+          {
+            "description": "Fast responses with lighter reasoning",
+            "reasoningEffort": "low"
+          },
+          {
+            "description": "Balances speed and reasoning depth for everyday tasks",
+            "reasoningEffort": "medium"
+          },
+          {
+            "description": "Greater reasoning depth for complex problems",
+            "reasoningEffort": "high"
+          },
+          {
+            "description": "Extra high reasoning depth for complex problems",
+            "reasoningEffort": "xhigh"
+          },
+          {
+            "description": "Maximum reasoning depth for the hardest problems",
+            "reasoningEffort": "max"
+          }
+        ]
+      },
+      {
+        "id": "gpt-5.5",
+        "model": "gpt-5.5",
+        "isDefault": false,
+        "defaultReasoningEffort": "medium",
+        "supportedReasoningEfforts": [
+          {
+            "description": "Fast responses with lighter reasoning",
+            "reasoningEffort": "low"
+          },
+          {
+            "description": "Balances speed and reasoning depth for everyday tasks",
+            "reasoningEffort": "medium"
+          },
+          {
+            "description": "Greater reasoning depth for complex problems",
+            "reasoningEffort": "high"
+          },
+          {
+            "description": "Extra high reasoning depth for complex problems",
+            "reasoningEffort": "xhigh"
+          }
+        ]
+      }
+    ],
+    "next_cursor": null
+  },
+  {
+    "case": "thread_start",
+    "time": 1790605910.521767,
+    "thread_id": "01a0e86d-e0ae-7762-881d-38afd6a56337",
+    "model": "gpt-6-astra"
+  },
+  {
+    "case": "file_turn",
+    "time": 1790605925.157989,
+    "thread_id": "01a0e86d-e0ae-7762-881d-38afd6a56337",
+    "turn_id": "01a0e86d-e207-7b11-9497-f97e05833552",
+    "elapsed_s": 14.596,
+    "events": {
+      "turn/started": 1,
+      "item/started": 5,
+      "item/completed": 5,
+      "item/agentMessage/delta": 16,
+      "turn/diff/updated": 3,
+      "thread/tokenUsage/updated": 2,
+      "turn/completed": 1
+    },
+    "terminal": {
+      "id": "01a0e86d-e207-7b11-9497-f97e05833552",
+      "status": "completed",
+      "error": null
+    },
+    "items": [
+      {
+        "method": "item/started",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Use apply_patch to create probe.txt in the working directory containing exactly RUNTIME_PROBE_OK followed by a newline. Then run pwd and read probe.txt to verify. Remember the conversation token ORCHID_728. Reply PROBE_DONE.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86d-efca-7513-bc63-9227afcfc2dc",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Use apply_patch to create probe.txt in the working directory containing exactly RUNTIME_PROBE_OK followed by a newline. Then run pwd and read probe.txt to verify. Remember the conversation token ORCHID_728. Reply PROBE_DONE.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86d-efca-7513-bc63-9227afcfc2dc",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a5c78e087d09f2bc792a4507e71",
+          "memoryCitation": null,
+          "phase": "commentary",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a5c78e087d09f2bc792a4507e71",
+          "memoryCitation": null,
+          "phase": "commentary",
+          "questions": null,
+          "text": "I’ll create probe.txt and verify its contents and working directory.\n",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "changes": [
+            {
+              "diff": "RUNTIME_PROBE_OK\n",
+              "kind": {
+                "type": "add"
+              },
+              "path": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work/probe.txt"
+            }
+          ],
+          "id": "exec-b1b3863f-0faa-40c0-8ef6-c587f23f10e0",
+          "status": "inProgress",
+          "type": "fileChange"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "changes": [
+            {
+              "diff": "RUNTIME_PROBE_OK\n",
+              "kind": {
+                "type": "add"
+              },
+              "path": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work/probe.txt"
+            }
+          ],
+          "id": "exec-b1b3863f-0faa-40c0-8ef6-c587f23f10e0",
+          "status": "completed",
+          "type": "fileChange"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "aggregatedOutput": null,
+          "command": "/bin/zsh -lc 'pwd\ncat probe.txt'",
+          "commandActions": [
+            {
+              "command": "pwd\ncat probe.txt",
+              "type": "unknown"
+            }
+          ],
+          "cwd": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work",
+          "durationMs": null,
+          "exitCode": null,
+          "id": "exec-e998eb67-545a-4d87-a95d-91b1fecf4d71",
+          "pluginId": null,
+          "processId": "98739",
+          "scriptPath": null,
+          "source": "unifiedExecStartup",
+          "status": "inProgress",
+          "type": "commandExecution"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "aggregatedOutput": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work\nRUNTIME_PROBE_OK\n",
+          "command": "/bin/zsh -lc 'pwd\ncat probe.txt'",
+          "commandActions": [
+            {
+              "command": "pwd\ncat probe.txt",
+              "type": "unknown"
+            }
+          ],
+          "cwd": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work",
+          "durationMs": 0,
+          "exitCode": 0,
+          "id": "exec-e998eb67-545a-4d87-a95d-91b1fecf4d71",
+          "pluginId": null,
+          "processId": "98739",
+          "scriptPath": null,
+          "source": "unifiedExecStartup",
+          "status": "completed",
+          "type": "commandExecution"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a64afc887d0a08bf9d2328f71c2",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a64afc887d0a08bf9d2328f71c2",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "PROBE_DONE",
+          "type": "agentMessage"
+        }
+      }
+    ]
+  },
+  {
+    "case": "file_on_disk",
+    "time": 1790605925.160047,
+    "exists": true,
+    "content": "RUNTIME_PROBE_OK\n",
+    "sha256": "948746e7bdabdcd8366fe3c95b301a23e7934c12efb838aed0e18143160a0a52"
+  },
+  {
+    "case": "steer_ack",
+    "time": 1790605929.655075,
+    "response": {
+      "turnId": "01a0e86e-1b2c-7d53-b5b4-ec20a5e96091"
+    },
+    "expected_turn_id": "01a0e86e-1b2c-7d53-b5b4-ec20a5e96091"
+  },
+  {
+    "case": "steer_turn",
+    "time": 1790605940.688663,
+    "thread_id": "01a0e86d-e0ae-7762-881d-38afd6a56337",
+    "turn_id": "01a0e86e-1b2c-7d53-b5b4-ec20a5e96091",
+    "elapsed_s": 15.512,
+    "events": {
+      "turn/started": 1,
+      "item/started": 5,
+      "item/completed": 5,
+      "item/agentMessage/delta": 21,
+      "thread/tokenUsage/updated": 2,
+      "turn/completed": 1
+    },
+    "terminal": {
+      "id": "01a0e86e-1b2c-7d53-b5b4-ec20a5e96091",
+      "status": "completed",
+      "error": null
+    },
+    "items": [
+      {
+        "method": "item/started",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Run the shell command sleep 8, then reply ORIGINAL_MARKER. Do not write files.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-1b60-7f80-8420-313f5b738169",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Run the shell command sleep 8, then reply ORIGINAL_MARKER. Do not write files.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-1b60-7f80-8420-313f5b738169",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a67ebd887d08eaf76825606f618",
+          "memoryCitation": null,
+          "phase": "commentary",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a67ebd887d08eaf76825606f618",
+          "memoryCitation": null,
+          "phase": "commentary",
+          "questions": null,
+          "text": "I’ll run `sleep 8`, then reply with the requested marker.\n",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "aggregatedOutput": null,
+          "command": "/bin/zsh -lc 'sleep 8'",
+          "commandActions": [
+            {
+              "command": "sleep 8",
+              "type": "unknown"
+            }
+          ],
+          "cwd": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work",
+          "durationMs": null,
+          "exitCode": null,
+          "id": "exec-c9d555e6-253c-4bed-bf71-00bba6a10ba4",
+          "pluginId": null,
+          "processId": "5146",
+          "scriptPath": null,
+          "source": "unifiedExecStartup",
+          "status": "inProgress",
+          "type": "commandExecution"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "aggregatedOutput": null,
+          "command": "/bin/zsh -lc 'sleep 8'",
+          "commandActions": [
+            {
+              "command": "sleep 8",
+              "type": "unknown"
+            }
+          ],
+          "cwd": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work",
+          "durationMs": 7956,
+          "exitCode": 0,
+          "id": "exec-c9d555e6-253c-4bed-bf71-00bba6a10ba4",
+          "pluginId": null,
+          "processId": "5146",
+          "scriptPath": null,
+          "source": "unifiedExecStartup",
+          "status": "completed",
+          "type": "commandExecution"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Change the final reply to STEER_ACCEPTED_728 only.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-4bd8-7d33-9883-511240e8ca27",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Change the final reply to STEER_ACCEPTED_728 only.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-4bd8-7d33-9883-511240e8ca27",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a7441cc87d0afad8c767d3bc9c5",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a7441cc87d0afad8c767d3bc9c5",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "STEER_ACCEPTED_728",
+          "type": "agentMessage"
+        }
+      }
+    ]
+  },
+  {
+    "case": "steer_after_completion",
+    "time": 1790605940.6931999,
+    "error_type": "InvalidRequestError",
+    "error": "JSON-RPC error -32600: no active turn to steer"
+  },
+  {
+    "case": "interrupt_ack",
+    "time": 1790605945.068866,
+    "response": {}
+  },
+  {
+    "case": "interrupt_turn",
+    "time": 1790605945.070723,
+    "thread_id": "01a0e86d-e0ae-7762-881d-38afd6a56337",
+    "turn_id": "01a0e86e-57d8-7811-b03d-06c585bfa556",
+    "elapsed_s": 4.365,
+    "events": {
+      "turn/started": 1,
+      "item/started": 3,
+      "item/completed": 2,
+      "item/agentMessage/delta": 24,
+      "thread/tokenUsage/updated": 1,
+      "turn/completed": 1
+    },
+    "terminal": {
+      "id": "01a0e86e-57d8-7811-b03d-06c585bfa556",
+      "status": "interrupted",
+      "error": null
+    },
+    "items": [
+      {
+        "method": "item/started",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Run sleep 20 and then create must-not-exist.txt with text TOO_LATE. Do not create it before the sleep finishes.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-580c-7392-858a-45c9cc2fd55b",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Run sleep 20 and then create must-not-exist.txt with text TOO_LATE. Do not create it before the sleep finishes.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-580c-7392-858a-45c9cc2fd55b",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a76e68087d0a1017ae33615a30a",
+          "memoryCitation": null,
+          "phase": "commentary",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a76e68087d0a1017ae33615a30a",
+          "memoryCitation": null,
+          "phase": "commentary",
+          "questions": null,
+          "text": "I’ll run `sleep 20`, then create `must-not-exist.txt` containing `TOO_LATE`.\n",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "aggregatedOutput": null,
+          "command": "/bin/zsh -lc 'sleep 20'",
+          "commandActions": [
+            {
+              "command": "sleep 20",
+              "type": "unknown"
+            }
+          ],
+          "cwd": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work",
+          "durationMs": null,
+          "exitCode": null,
+          "id": "exec-c1e6a84f-830b-4ef6-8216-b65e980aaea9",
+          "pluginId": null,
+          "processId": "81087",
+          "scriptPath": null,
+          "source": "unifiedExecStartup",
+          "status": "inProgress",
+          "type": "commandExecution"
+        }
+      }
+    ]
+  },
+  {
+    "case": "concurrent_overlap",
+    "time": 1790605951.4155672,
+    "a_finished_at_b_start": false,
+    "a_turn": "01a0e86e-691b-7b11-ac5c-ef9f825b73f7",
+    "b_turn": "01a0e86e-81b3-70f3-bcfe-e5b5f6b412ef"
+  },
+  {
+    "case": "concurrent_b",
+    "time": 1790605955.935669,
+    "thread_id": "01a0e86e-68f4-7150-813f-571aad0a098f",
+    "turn_id": "01a0e86e-81b3-70f3-bcfe-e5b5f6b412ef",
+    "elapsed_s": 4.518,
+    "events": {
+      "turn/started": 1,
+      "item/started": 2,
+      "item/completed": 2,
+      "item/agentMessage/delta": 3,
+      "thread/tokenUsage/updated": 1,
+      "turn/completed": 1
+    },
+    "terminal": {
+      "id": "01a0e86e-81b3-70f3-bcfe-e5b5f6b412ef",
+      "status": "completed",
+      "error": null
+    },
+    "items": [
+      {
+        "method": "item/started",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Reply CONCURRENT_B only. Do not use tools.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-863c-7421-bddc-3bf101d6f595",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Reply CONCURRENT_B only. Do not use tools.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-863c-7421-bddc-3bf101d6f595",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_0de0294b619cda73016aba7a83739487d0995cbcec92a01f14",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_0de0294b619cda73016aba7a83739487d0995cbcec92a01f14",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "CONCURRENT_B",
+          "type": "agentMessage"
+        }
+      }
+    ]
+  },
+  {
+    "case": "concurrent_a",
+    "time": 1790605961.831402,
+    "thread_id": "01a0e86d-e0ae-7762-881d-38afd6a56337",
+    "turn_id": "01a0e86e-691b-7b11-ac5c-ef9f825b73f7",
+    "elapsed_s": 16.705,
+    "events": {
+      "turn/started": 1,
+      "item/started": 4,
+      "item/completed": 4,
+      "item/agentMessage/delta": 18,
+      "thread/tokenUsage/updated": 2,
+      "turn/completed": 1
+    },
+    "terminal": {
+      "id": "01a0e86e-691b-7b11-ac5c-ef9f825b73f7",
+      "status": "completed",
+      "error": null
+    },
+    "items": [
+      {
+        "method": "item/started",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Run sleep 8 then reply CONCURRENT_A. Do not write files.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-6951-7f22-bf97-cad1c14d6d83",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Run sleep 8 then reply CONCURRENT_A. Do not write files.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-6951-7f22-bf97-cad1c14d6d83",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a7dbc4087d0b6feccfc2d06e0ea",
+          "memoryCitation": null,
+          "phase": "commentary",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a7dbc4087d0b6feccfc2d06e0ea",
+          "memoryCitation": null,
+          "phase": "commentary",
+          "questions": null,
+          "text": "I’ll run `sleep 8` and then reply with the marker.\n",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "aggregatedOutput": null,
+          "command": "/bin/zsh -lc 'sleep 8'",
+          "commandActions": [
+            {
+              "command": "sleep 8",
+              "type": "unknown"
+            }
+          ],
+          "cwd": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work",
+          "durationMs": null,
+          "exitCode": null,
+          "id": "exec-53d47760-4a5d-4a81-92ee-5d8198edc296",
+          "pluginId": null,
+          "processId": "20993",
+          "scriptPath": null,
+          "source": "unifiedExecStartup",
+          "status": "inProgress",
+          "type": "commandExecution"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "aggregatedOutput": null,
+          "command": "/bin/zsh -lc 'sleep 8'",
+          "commandActions": [
+            {
+              "command": "sleep 8",
+              "type": "unknown"
+            }
+          ],
+          "cwd": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work",
+          "durationMs": 7978,
+          "exitCode": 0,
+          "id": "exec-53d47760-4a5d-4a81-92ee-5d8198edc296",
+          "pluginId": null,
+          "processId": "20993",
+          "scriptPath": null,
+          "source": "unifiedExecStartup",
+          "status": "completed",
+          "type": "commandExecution"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a89653087d08aca172fc501541d",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a89653087d08aca172fc501541d",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "CONCURRENT_A",
+          "type": "agentMessage"
+        }
+      }
+    ]
+  },
+  {
+    "case": "same_thread_second_start",
+    "time": 1790605968.09838,
+    "first_id": "01a0e86e-aa6c-7970-81de-130e4d457de2",
+    "second_id": "01a0e86e-aa6c-7970-81de-130e4d457de2",
+    "same_id": true
+  },
+  {
+    "case": "same_thread_first",
+    "time": 1790605979.200329,
+    "thread_id": "01a0e86d-e0ae-7762-881d-38afd6a56337",
+    "turn_id": "01a0e86e-aa6c-7970-81de-130e4d457de2",
+    "elapsed_s": 17.353,
+    "events": {
+      "turn/started": 1,
+      "item/started": 5,
+      "item/completed": 5,
+      "item/agentMessage/delta": 19,
+      "thread/tokenUsage/updated": 2,
+      "turn/completed": 1
+    },
+    "terminal": {
+      "id": "01a0e86e-aa6c-7970-81de-130e4d457de2",
+      "status": "completed",
+      "error": null
+    },
+    "items": [
+      {
+        "method": "item/started",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Run sleep 8 then reply SAME_THREAD_ORIGINAL. Do not write files.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-aaae-7e71-8873-1692f75c710a",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Run sleep 8 then reply SAME_THREAD_ORIGINAL. Do not write files.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-aaae-7e71-8873-1692f75c710a",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a8d2c7087d0b463716ce5dbd9b6",
+          "memoryCitation": null,
+          "phase": "commentary",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a8d2c7087d0b463716ce5dbd9b6",
+          "memoryCitation": null,
+          "phase": "commentary",
+          "questions": null,
+          "text": "I’ll run `sleep 8`, then reply with the requested marker.\n",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "aggregatedOutput": null,
+          "command": "/bin/zsh -lc 'sleep 8'",
+          "commandActions": [
+            {
+              "command": "sleep 8",
+              "type": "unknown"
+            }
+          ],
+          "cwd": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work",
+          "durationMs": null,
+          "exitCode": null,
+          "id": "exec-434123a1-54b0-4d6c-82f6-c637f2502101",
+          "pluginId": null,
+          "processId": "86515",
+          "scriptPath": null,
+          "source": "unifiedExecStartup",
+          "status": "inProgress",
+          "type": "commandExecution"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "aggregatedOutput": null,
+          "command": "/bin/zsh -lc 'sleep 8'",
+          "commandActions": [
+            {
+              "command": "sleep 8",
+              "type": "unknown"
+            }
+          ],
+          "cwd": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work",
+          "durationMs": 7960,
+          "exitCode": 0,
+          "id": "exec-434123a1-54b0-4d6c-82f6-c637f2502101",
+          "pluginId": null,
+          "processId": "86515",
+          "scriptPath": null,
+          "source": "unifiedExecStartup",
+          "status": "completed",
+          "type": "commandExecution"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Change final reply to SAME_THREAD_SECOND. Do not write files.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-e1ff-7e83-bf12-d3b84406fe8a",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Change final reply to SAME_THREAD_SECOND. Do not write files.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-e1ff-7e83-bf12-d3b84406fe8a",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a9ade1487d0bf58a205d0f10364",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a9ade1487d0bf58a205d0f10364",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "SAME_THREAD_SECOND",
+          "type": "agentMessage"
+        }
+      }
+    ]
+  },
+  {
+    "case": "same_thread_second",
+    "time": 1790605979.202934,
+    "thread_id": "01a0e86d-e0ae-7762-881d-38afd6a56337",
+    "turn_id": "01a0e86e-aa6c-7970-81de-130e4d457de2",
+    "elapsed_s": 11.101,
+    "events": {
+      "item/completed": 3,
+      "thread/tokenUsage/updated": 2,
+      "item/started": 2,
+      "item/agentMessage/delta": 4,
+      "turn/completed": 1
+    },
+    "terminal": {
+      "id": "01a0e86e-aa6c-7970-81de-130e4d457de2",
+      "status": "completed",
+      "error": null
+    },
+    "items": [
+      {
+        "method": "item/completed",
+        "item": {
+          "aggregatedOutput": null,
+          "command": "/bin/zsh -lc 'sleep 8'",
+          "commandActions": [
+            {
+              "command": "sleep 8",
+              "type": "unknown"
+            }
+          ],
+          "cwd": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-tqgyghv9/work",
+          "durationMs": 7960,
+          "exitCode": 0,
+          "id": "exec-434123a1-54b0-4d6c-82f6-c637f2502101",
+          "pluginId": null,
+          "processId": "86515",
+          "scriptPath": null,
+          "source": "unifiedExecStartup",
+          "status": "completed",
+          "type": "commandExecution"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Change final reply to SAME_THREAD_SECOND. Do not write files.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-e1ff-7e83-bf12-d3b84406fe8a",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Change final reply to SAME_THREAD_SECOND. Do not write files.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86e-e1ff-7e83-bf12-d3b84406fe8a",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a9ade1487d0bf58a205d0f10364",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_0caa55390d766bf3016aba7a9ade1487d0bf58a205d0f10364",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "SAME_THREAD_SECOND",
+          "type": "agentMessage"
+        }
+      }
+    ]
+  },
+  {
+    "case": "client_closed",
+    "time": 1790605979.322773,
+    "thread_id": "01a0e86d-e0ae-7762-881d-38afd6a56337"
+  },
+  {
+    "case": "resume_history",
+    "time": 1790605979.600312,
+    "same_thread_id": true,
+    "turns": [
+      {
+        "id": "01a0e86d-e207-7b11-9497-f97e05833552",
+        "status": "completed"
+      },
+      {
+        "id": "01a0e86e-1b2c-7d53-b5b4-ec20a5e96091",
+        "status": "completed"
+      },
+      {
+        "id": "01a0e86e-57d8-7811-b03d-06c585bfa556",
+        "status": "interrupted"
+      },
+      {
+        "id": "01a0e86e-691b-7b11-ac5c-ef9f825b73f7",
+        "status": "completed"
+      },
+      {
+        "id": "01a0e86e-aa6c-7970-81de-130e4d457de2",
+        "status": "completed"
+      }
+    ]
+  },
+  {
+    "case": "resume_turn",
+    "time": 1790605998.166013,
+    "thread_id": "01a0e86d-e0ae-7762-881d-38afd6a56337",
+    "turn_id": "01a0e86e-efd6-7b11-bad9-2e6dc9fc9235",
+    "elapsed_s": 18.549,
+    "events": {
+      "turn/started": 1,
+      "item/started": 2,
+      "item/completed": 2,
+      "item/agentMessage/delta": 5,
+      "thread/tokenUsage/updated": 1,
+      "turn/completed": 1
+    },
+    "terminal": {
+      "id": "01a0e86e-efd6-7b11-bad9-2e6dc9fc9235",
+      "status": "completed",
+      "error": null
+    },
+    "items": [
+      {
+        "method": "item/started",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Without reading files, reply with the conversation token I asked you to remember in the first turn. No tools.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86f-184e-73a3-a7ac-433b0fa90934",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Without reading files, reply with the conversation token I asked you to remember in the first turn. No tools.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e86f-184e-73a3-a7ac-433b0fa90934",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_0d0b57a09a488ebe016aba7aad248487d0b4faac8cb141d6e6",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_0d0b57a09a488ebe016aba7aad248487d0b4faac8cb141d6e6",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "ORCHID_728",
+          "type": "agentMessage"
+        }
+      }
+    ]
+  },
+  {
+    "case": "interrupt_file_check",
+    "time": 1790605998.2031412,
+    "exists": false
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "review_date": "2026-09-29",
+  "evidence": "../runtime-evidence/phase1-live.json",
+  "original_passed": false,
+  "historical_database_checked_read_only": true,
+  "run_status": "FAILED",
+  "runtime_status": "failed",
+  "runtime_error_code": "usageLimitExceeded",
+  "live_model_rerun_performed": false,
+  "note": "Historical failure cause only; this does not establish the account's current quota or a current successful end-to-end run."
+}

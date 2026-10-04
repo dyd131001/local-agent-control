@@ -1,0 +1,63 @@
+[
+  {
+    "case": "sandbox_readonly",
+    "time": 1790606060.659719,
+    "policy": {
+      "type": "readOnly"
+    },
+    "response": {
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": "{\"cwd\": \"/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/work\", \"/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/work/readonly.txt\": \"PermissionError\", \"/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/readonly-outside.txt\": \"PermissionError\", \"/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/extra/readonly.txt\": \"PermissionError\"}\n"
+    },
+    "files": {
+      "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/work/readonly.txt": false,
+      "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/readonly-outside.txt": false,
+      "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/extra/readonly.txt": false
+    }
+  },
+  {
+    "case": "sandbox_workspace",
+    "time": 1790606060.7510452,
+    "policy": {
+      "type": "workspaceWrite",
+      "writableRoots": [],
+      "excludeSlashTmp": true,
+      "excludeTmpdirEnvVar": true,
+      "networkAccess": false
+    },
+    "response": {
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": "{\"cwd\": \"/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/work\", \"/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/work/workspace.txt\": \"written\", \"/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/workspace-outside.txt\": \"PermissionError\", \"/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/extra/workspace.txt\": \"PermissionError\"}\n"
+    },
+    "files": {
+      "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/work/workspace.txt": true,
+      "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/workspace-outside.txt": false,
+      "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/extra/workspace.txt": false
+    }
+  },
+  {
+    "case": "sandbox_additional_root",
+    "time": 1790606060.838196,
+    "policy": {
+      "type": "workspaceWrite",
+      "writableRoots": [
+        "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/extra"
+      ],
+      "excludeSlashTmp": true,
+      "excludeTmpdirEnvVar": true,
+      "networkAccess": false
+    },
+    "response": {
+      "exitCode": 0,
+      "stderr": "",
+      "stdout": "{\"cwd\": \"/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/work\", \"/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/work/additional_root.txt\": \"written\", \"/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/additional_root-outside.txt\": \"PermissionError\", \"/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/extra/additional_root.txt\": \"written\"}\n"
+    },
+    "files": {
+      "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/work/additional_root.txt": true,
+      "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/additional_root-outside.txt": false,
+      "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-n4l19g_y/extra/additional_root.txt": true
+    }
+  }
+]

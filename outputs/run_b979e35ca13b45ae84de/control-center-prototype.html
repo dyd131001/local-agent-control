@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Control Center · 개선 시안</title>
+  <style>
+    :root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #1c2935; background: #f4f6f8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid #8bb9ef; outline-offset: 2px; }
+    .topbar { background: #fff; border-bottom: 1px solid #dce3e8; padding: 18px max(24px, calc((100vw - 1440px) / 2)); display: flex; justify-content: space-between; align-items: center; gap: 18px; }
+    .brand { font-size: 20px; font-weight: 750; letter-spacing: -.03em; }
+    .top-actions, .inline { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .status { display: inline-flex; align-items: center; gap: 8px; background: #f1f5f8; border-radius: 999px; padding: 8px 12px; font-size: 13px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #a2abb4; }
+    .dot.online { background: #19a56b; } .dot.busy { background: #e4a52a; } .dot.offline { background: #df6570; }
+    .app { max-width: 1440px; margin: auto; display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: calc(100vh - 73px); }
+    aside { border-right: 1px solid #dce3e8; padding: 24px 16px; background: #fafbfc; }
+    main { padding: 30px 36px 60px; min-width: 0; }
+    h1 { font-size: 27px; letter-spacing: -.04em; margin: 0 0 8px; }
+    h2 { font-size: 18px; margin: 0 0 16px; }
+    h3 { font-size: 15px; margin: 0 0 10px; }
+    p { margin: 0; line-height: 1.55; }
+    .muted { color: #677786; font-size: 13px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .section-label { color: #677786; font-size: 12px; font-weight: 700; letter-spacing: .08em; }
+    .nav-button { display: block; width: 100%; border: 0; background: transparent; color: #354657; text-align: left; padding: 11px 13px; border-radius: 9px; margin: 3px 0; }
+    .nav-button:hover, .nav-button.active { background: #e6f0fc; color: #14599d; }
+    .nav-button.inactive { color: #929ca6; }
+    .nav-meta { float: right; font-size: 11px; }
+    .btn { border: 1px solid #cad5de; background: #fff; color: #263b4e; border-radius: 8px; padding: 9px 13px; font-weight: 650; }
+    .btn:hover { background: #f0f5f9; }
+    .btn.primary { background: #1767ac; color: white; border-color: #1767ac; }
+    .btn.primary:hover { background: #0e568f; }
+    .btn.ghost { border-color: transparent; background: transparent; }
+    .btn.small { padding: 6px 9px; font-size: 12px; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .card { background: #fff; border: 1px solid #dce3e8; border-radius: 13px; padding: 22px; box-shadow: 0 2px 12px #263b4e08; }
+    .stack { display: grid; gap: 16px; }
+    .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 420px); gap: 20px; align-items: start; }
+    .list { display: grid; gap: 10px; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 14px; border: 1px solid #e2e7ec; border-radius: 9px; padding: 12px 14px; }
+    .row strong { display: block; font-size: 14px; margin-bottom: 4px; }
+    .row p { color: #677786; font-size: 12px; }
+    .field { display: grid; gap: 7px; margin: 14px 0; }
+    .field label, .label { font-size: 13px; font-weight: 700; }
+    input[type="text"], textarea, select { width: 100%; border: 1px solid #cbd6de; border-radius: 8px; padding: 10px 12px; background: white; color: #1c2935; }
+    textarea { resize: vertical; min-height: 90px; }
+    .chips, .tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip, .tab { border: 1px solid #ced8e0; background: #fff; color: #34485b; border-radius: 999px; padding: 8px 12px; }
+    .chip.selected, .tab.selected { border-color: #1767ac; background: #e9f3fc; color: #14599d; font-weight: 700; }
+    .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 24px 0; }
+    .summary strong { display: block; font-size: 24px; margin-top: 6px; }
+    .page-head { display: flex; justify-content: space-between; align-items: start; gap: 16px; margin-bottom: 22px; }
+    .grid-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 10px; }
+    .action { text-align: left; border: 1px solid #d8e2ea; background: #fff; border-radius: 10px; padding: 15px; min-height: 85px; }
+    .action strong, .action span { display: block; }
+    .action span { font-size: 12px; color: #667786; margin-top: 6px; }
+    .action.selected { border-color: #1767ac; background: #ecf5ff; }
+    .detail { border-left: 1px solid #e0e7ed; padding-left: 20px; min-height: 180px; }
+    .more-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(230px, 1fr); gap: 22px; }
+    .picker { border: 1px dashed #aebfcd; border-radius: 9px; padding: 14px; background: #f8fafc; }
+    .selected-item { background: #eaf3fc; border-color: #7eb5e4; }
+    .click-row { width: 100%; text-align: left; background: #fff; cursor: pointer; }
+    .click-row:hover { border-color: #8bb9e5; }
+    .notice { padding: 11px 13px; border-radius: 8px; background: #edf8f2; color: #21734b; font-size: 13px; margin-top: 14px; }
+    .error { background: #fff0f0; color: #a64242; }
+    .hidden { display: none !important; }
+    @media (max-width: 900px) { .split, .more-layout { grid-template-columns: 1fr; } .detail { border-left: 0; border-top: 1px solid #e0e7ed; padding: 20px 0 0; } main { padding: 24px; } }
+    @media (max-width: 650px) { .app { grid-template-columns: 1fr; } aside { border-right: 0; border-bottom: 1px solid #dce3e8; padding: 14px; } .summary { grid-template-columns: 1fr; } .topbar { align-items: start; flex-direction: column; padding: 16px; } .page-head { flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Control Center <span class="muted">개선 시안</span></div>
+    <div class="top-actions"><span class="status" aria-live="polite"><span id="status-dot" class="dot"></span><span id="agent-status">에이전트 상태 확인 중…</span></span><button class="btn small" id="refresh-status">상태 새로고침</button></div>
+  </header>
+  <div class="app">
+    <aside>
+      <button class="nav-button active" data-nav="dashboard">대시보드</button>
+      <button class="nav-button" data-nav="requests">요청</button>
+      <button class="nav-button" data-nav="new-category">＋ 카테고리 만들기</button>
+      <div class="section-head" style="margin:24px 12px 10px"><span class="section-label">카테고리</span><button id="toggle-inactive" class="btn ghost small">비활성 보기</button></div>
+      <div id="category-nav"></div>
+    </aside>
+    <main id="main"></main>
+  </div>
+  <input id="directory-fallback" type="file" webkitdirectory directory multiple class="hidden">
+  <script>
+    // This standalone prototype uses sample data. An app can supply its own API via window.controlCenterApi.
+    const presets = [
+      {name:'개발', description:'기능 구현, 버그 수정, 코드 검토'},
+      {name:'디자인', description:'화면 설계, 시각 자산, 사용성 개선'},
+      {name:'리서치', description:'자료 조사, 비교 분석, 요약'},
+      {name:'문서', description:'기획서, 가이드, 보고서 작성'},
+      {name:'운영', description:'반복 업무, 점검, 일정 관리'},
+      {name:'직접 입력', description:''}
+    ];
+    const actions = [
+      {key:'tasks', title:'작업', subtitle:'작업 목록과 생성', detail:'카테고리의 작업을 확인하고 오른쪽 양식에서 새 작업을 만듭니다.'},
+      {key:'requests', title:'요청', subtitle:'새 작업 · 대화 지속 · 질문', detail:'기존 대화나 작업을 선택한 뒤 요청을 작성합니다.'},
+      {key:'materials', title:'자료 등록', subtitle:'폴더 선택으로 자료 연결', detail:'폴더 선택기를 열어 자료가 있는 위치를 지정합니다.'},
+      {key:'settings', title:'설정', subtitle:'이름과 활성 상태 관리', detail:'카테고리 이름을 바꾸거나 비활성화 및 재활성화합니다.'}
+    ];
+    const seed = {
+      categories:[{id:'c1',name:'개발',description:'기능 구현 및 버그 수정',active:true},{id:'c2',name:'리서치',description:'조사 및 분석',active:true},{id:'c3',name:'문서',description:'문서 작성',active:false}],
+      tasks:[{id:'t1',categoryId:'c1',title:'대시보드 상태 표시 개선',status:'진행 중'},{id:'t2',categoryId:'c1',title:'요청 흐름 검토',status:'대기'},{id:'t3',categoryId:'c2',title:'사용자 의견 정리',status:'완료'}],
+      threads:[{id:'th1',title:'대시보드 개선 논의',taskId:'t1',last:'상태를 새로고침 없이 확인하고 싶어요.'},{id:'th2',title:'요청 화면 설계',taskId:'t2',last:'기존 대화 선택 화면이 필요합니다.'},{id:'th3',title:'자료 구조 문의',taskId:null,last:'폴더를 어떻게 연결하나요?'}],
+      requests:[], materials:[], mockAgentStatus:'online'
+    };
+    const storageKey = 'control-center-prototype-v1';
+    let data;
+    try { data = {...seed, ...JSON.parse(localStorage.getItem(storageKey) || '{}')}; } catch { data = structuredClone(seed); }
+    let view = {page:'dashboard', categoryId:null, showInactive:false, more:false, action:'tasks', requestMode:'new', selectedThread:null, selectedTask:null, preset:null, notice:'', noticeError:false};
+    let statusSequence = 0;
+    const $ = id => document.getElementById(id);
+    const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const save = () => { try { localStorage.setItem(storageKey, JSON.stringify(data)); } catch {} };
+    const category = () => data.categories.find(c => c.id === view.categoryId);
+    const task = id => data.tasks.find(t => t.id === id);
+    const notice = (message, error=false) => { view.notice=message; view.noticeError=error; render(); };
+    const noticeHTML = () => view.notice ? `<div class="notice ${view.noticeError?'error':''}" role="status">${esc(view.notice)}</div>` : '';
+    const badge = text => `<span class="muted">${esc(text)}</span>`;
+
+    async function refreshAgentStatus() {
+      const seq = ++statusSequence;
+      $('agent-status').textContent = '에이전트 상태 확인 중…';
+      $('status-dot').className = 'dot';
+      try {
+        const result = window.controlCenterApi?.getAgentStatus ? await window.controlCenterApi.getAgentStatus() : {status:data.mockAgentStatus};
+        if (seq !== statusSequence) return;
+        const status = result?.status || 'unknown';
+        const labels = {online:'온라인',busy:'작업 중',offline:'오프라인',unknown:'알 수 없음'};
+        $('agent-status').textContent = `에이전트: ${labels[status] || labels.unknown} · ${new Date().toLocaleTimeString('ko-KR')}`;
+        $('status-dot').className = `dot ${['online','busy','offline'].includes(status) ? status : ''}`;
+      } catch (error) {
+        if (seq !== statusSequence) return;
+        $('agent-status').textContent = '에이전트 상태를 불러오지 못했습니다';
+        $('status-dot').className = 'dot offline';
+      }
+    }
+
+    function renderNav() {
+      document.querySelectorAll('[data-nav]').forEach(el => el.classList.toggle('active', el.dataset.nav === view.page));
+      $('toggle-inactive').textContent = view.showInactive ? '비활성 숨기기' : '비활성 보기';
+      $('category-nav').innerHTML = data.categories.filter(c => c.active || view.showInactive).map(c => `<button class="nav-button ${!c.active?'inactive':''} ${view.page==='category'&&view.categoryId===c.id?'active':''}" data-category="${esc(c.id)}">${esc(c.name)}${!c.active?'<span class="nav-meta">비활성</span>':''}</button>`).join('');
+    }
+
+    function renderDashboard() {
+      return `<div class="page-head"><div><h1>대시보드</h1><p class="muted">현재 상태와 최근 작업을 한눈에 확인합니다.</p></div><button class="btn" id="simulate-status">샘플 상태 변경</button></div>
+        <div class="summary"><div class="card"><span class="muted">활성 카테고리</span><strong>${data.categories.filter(c=>c.active).length}</strong></div><div class="card"><span class="muted">진행 중 작업</span><strong>${data.tasks.filter(t=>t.status==='진행 중').length}</strong></div><div class="card"><span class="muted">대화 스레드</span><strong>${data.threads.length}</strong></div></div>
+        <div class="card"><h2>최근 작업</h2><div class="list">${data.tasks.slice().reverse().slice(0,5).map(t=>`<div class="row"><div><strong>${esc(t.title)}</strong><p>${esc(data.categories.find(c=>c.id===t.categoryId)?.name || '미분류')}</p></div>${badge(t.status)}</div>`).join('')}</div></div>${noticeHTML()}`;
+    }
+
+    function taskList(categoryId) {
+      const items = data.tasks.filter(t=>t.categoryId===categoryId);
+      return items.length ? items.map(t=>`<div class="row"><div><strong>${esc(t.title)}</strong><p>${esc(t.id)}</p></div>${badge(t.status)}</div>`).join('') : '<p class="muted">아직 작업이 없습니다.</p>';
+    }
+
+    function createTaskForm(c) {
+      return `<div class="card"><h2>이 카테고리에 작업 만들기</h2><p class="muted">선택한 카테고리: ${esc(c.name)}</p><form id="task-form"><div class="field"><label for="task-title">작업 제목</label><input id="task-title" name="title" type="text" required placeholder="예: 상태 갱신 오류 수정"></div><div class="field"><label for="task-detail">설명</label><textarea id="task-detail" name="detail" placeholder="필요한 내용을 적어주세요"></textarea></div><button class="btn primary" type="submit" ${!c.active?'disabled':''}>작업 만들기</button>${!c.active?'<p class="muted" style="margin-top:8px">비활성 카테고리는 다시 활성화한 뒤 작업을 만들 수 있습니다.</p>':''}</form></div>`;
+    }
+
+    function actionPanel(c) {
+      const selected = actions.find(a=>a.key===view.action);
+      let content = '';
+      if (view.action==='tasks') content=`<p>${esc(selected.detail)}</p><p class="muted" style="margin-top:12px">현재 작업 ${data.tasks.filter(t=>t.categoryId===c.id).length}개</p>`;
+      if (view.action==='requests') content=`<p>${esc(selected.detail)}</p><button class="btn primary" style="margin-top:14px" data-go-request="${esc(c.id)}">요청 만들기</button>`;
+      if (view.action==='materials') content=`<p>${esc(selected.detail)}</p><button class="btn primary" style="margin-top:14px" data-pick-directory="${esc(c.id)}">폴더 선택</button><div class="list" style="margin-top:14px">${data.materials.filter(m=>m.categoryId===c.id).map(m=>`<div class="row"><div><strong>${esc(m.name)}</strong><p>${esc(m.path || '선택된 폴더')}</p></div></div>`).join('') || '<span class="muted">등록된 자료가 없습니다.</span>'}</div>`;
+      if (view.action==='settings') content=`<form id="category-settings"><div class="field"><label for="category-rename">카테고리 이름</label><input id="category-rename" name="name" type="text" required value="${esc(c.name)}"></div><button class="btn" type="submit">이름 저장</button></form><button class="btn" style="margin-top:14px" data-toggle-category="${esc(c.id)}">${c.active?'비활성화':'다시 활성화'}</button>`;
+      return `<div class="card"><h2>더보기</h2><div class="more-layout"><div class="grid-actions">${actions.map(a=>`<button class="action ${view.action===a.key?'selected':''}" data-action="${a.key}" aria-pressed="${view.action===a.key}"><strong>${a.title}</strong><span>${a.subtitle}</span></button>`).join('')}</div><div class="detail" aria-live="polite"><h3>${esc(selected.title)}</h3>${content}</div></div></div>`;
+    }
+
+    function renderCategory() {
+      const c = category();
+      if (!c) return '<h1>카테고리를 찾을 수 없습니다.</h1>';
+      return `<div class="page-head"><div><h1>${esc(c.name)} ${!c.active?'<span class="muted">(비활성)</span>':''}</h1><p class="muted">${esc(c.description || '설명이 없습니다.')}</p></div><div class="inline"><button class="btn" id="more-button" aria-expanded="${view.more}">${view.more?'더보기 닫기':'더보기'}</button><button class="btn" data-toggle-category="${esc(c.id)}">${c.active?'비활성화':'다시 활성화'}</button></div></div>
+        <div class="stack">${view.more?actionPanel(c):''}<div class="split"><div class="card"><h2>작업 목록</h2><div class="list">${taskList(c.id)}</div></div>${createTaskForm(c)}</div></div>${noticeHTML()}`;
+    }
+
+    function renderNewCategory() {
+      return `<div class="page-head"><div><h1>카테고리 만들기</h1><p class="muted">유형을 고르면 이름과 설명을 채워 줍니다. 직접 수정할 수도 있습니다.</p></div></div><div class="card" style="max-width:760px"><div class="field"><span class="label">유형 선택</span><div class="chips">${presets.map((p,i)=>`<button class="chip ${view.preset===i?'selected':''}" data-preset="${i}" type="button">${p.name}</button>`).join('')}</div></div><form id="category-form"><div class="field"><label for="new-category-name">이름</label><input id="new-category-name" name="name" type="text" required maxlength="40" value="${view.preset===null?'':esc(presets[view.preset].name==='직접 입력'?'':presets[view.preset].name)}"></div><div class="field"><label for="new-category-description">설명</label><textarea id="new-category-description" name="description">${view.preset===null?'':esc(presets[view.preset].description)}</textarea></div><button class="btn primary" type="submit">카테고리 만들기</button></form></div>${noticeHTML()}`;
+    }
+
+    function contextList() {
+      const items = [...data.threads.map(th=>({type:'thread',id:th.id,title:th.title,subtitle:`대화 · ${task(th.taskId)?.title || '연결된 작업 없음'}`,last:th.last})), ...data.tasks.map(t=>({type:'task',id:t.id,title:t.title,subtitle:`작업 · ${data.categories.find(c=>c.id===t.categoryId)?.name || '미분류'}`,last:t.status}))];
+      return `<div class="list">${items.map(item=>{const selected=(item.type==='thread'&&view.selectedThread===item.id)||(item.type==='task'&&view.selectedTask===item.id);return `<button class="row click-row ${selected?'selected-item':''}" data-select-context="${item.type}:${esc(item.id)}" aria-pressed="${selected}"><div><strong>${esc(item.title)}</strong><p>${esc(item.subtitle)} · ${esc(item.last)}</p></div><span>${selected?'선택됨':'선택'}</span></button>`}).join('')}</div>`;
+    }
+
+    function requestForm() {
+      const selectedThread = data.threads.find(th=>th.id===view.selectedThread);
+      const selectedTask = task(view.selectedTask);
+      const requiresContext = view.requestMode!=='new';
+      const contextName = selectedThread?.title || selectedTask?.title;
+      return `<div class="card"><h2>${requiresContext?'선택한 대화 또는 작업':'새 작업 요청'}</h2>${requiresContext?`<div class="picker">${contextName?`<strong>${esc(contextName)}</strong><p class="muted">${selectedThread?'대화 스레드':'작업'}에 연결됩니다.</p>`:'<p class="muted">왼쪽 목록에서 기존 대화 또는 작업을 선택하세요.</p>'}</div>`:'<p class="muted">새로운 요청을 작성합니다.</p>'}<form id="request-form"><div class="field"><label for="request-text">${view.requestMode==='question'?'질문':'요청 내용'}</label><textarea id="request-text" name="text" required placeholder="내용을 입력하세요"></textarea></div><button class="btn primary" type="submit" ${requiresContext&&!contextName?'disabled':''}>${view.requestMode==='question'?'질문 등록':'요청 등록'}</button></form></div>`;
+    }
+
+    function renderRequests() {
+      return `<div class="page-head"><div><h1>요청 만들기</h1><p class="muted">기존 대화나 작업과 연결할 경우 먼저 목록에서 대상을 선택합니다.</p></div></div><div class="tabs" role="group" aria-label="요청 유형" style="margin-bottom:20px"><button class="tab ${view.requestMode==='new'?'selected':''}" data-request-mode="new">새 작업</button><button class="tab ${view.requestMode==='continue'?'selected':''}" data-request-mode="continue">기존 대화 이어가기</button><button class="tab ${view.requestMode==='question'?'selected':''}" data-request-mode="question">질문하기</button></div><div class="split"><div class="card"><h2>${view.requestMode==='new'?'최근 대화와 작업':'연결할 대화 또는 작업 선택'}</h2><p class="muted" style="margin-bottom:15px">제목과 연결된 작업을 확인하고 항목을 클릭하세요.</p>${contextList()}</div>${requestForm()}</div>${noticeHTML()}`;
+    }
+
+    function render() {
+      renderNav();
+      $('main').innerHTML = view.page==='dashboard'?renderDashboard():view.page==='category'?renderCategory():view.page==='new-category'?renderNewCategory():renderRequests();
+    }
+
+    document.addEventListener('click', async event => {
+      const target = event.target.closest('button');
+      if (!target) return;
+      view.notice='';
+      if (target.id==='refresh-status') return refreshAgentStatus();
+      if (target.id==='simulate-status') { data.mockAgentStatus = {online:'busy',busy:'offline',offline:'online'}[data.mockAgentStatus] || 'online'; save(); return refreshAgentStatus(); }
+      if (target.dataset.nav) { view.page=target.dataset.nav; view.preset=null; render(); return; }
+      if (target.id==='toggle-inactive') { view.showInactive=!view.showInactive; render(); return; }
+      if (target.dataset.category) { view.categoryId=target.dataset.category; view.page='category'; view.more=false; view.action='tasks'; render(); return; }
+      if (target.id==='more-button') { view.more=!view.more; render(); return; }
+      if (target.dataset.action) { view.action=target.dataset.action; render(); return; }
+      if (target.dataset.toggleCategory) { const c=data.categories.find(x=>x.id===target.dataset.toggleCategory); if(c){c.active=!c.active;save();notice(`${c.name} 카테고리를 ${c.active?'다시 활성화':'비활성화'}했습니다.`);} return; }
+      if (target.dataset.preset!==undefined) { view.preset=Number(target.dataset.preset); render(); return; }
+      if (target.dataset.goRequest) { view.page='requests'; view.requestMode='new'; render(); return; }
+      if (target.dataset.requestMode) { view.requestMode=target.dataset.requestMode; view.selectedThread=null; view.selectedTask=null; render(); return; }
+      if (target.dataset.selectContext) { const [type,id]=target.dataset.selectContext.split(':'); view.selectedThread=type==='thread'?id:null; view.selectedTask=type==='task'?id:null; render(); return; }
+      if (target.dataset.pickDirectory) { await pickDirectory(target.dataset.pickDirectory); return; }
+    });
+
+    document.addEventListener('submit', event => {
+      event.preventDefault();
+      const form=event.target;
+      const values=new FormData(form);
+      if (form.id==='category-form') {
+        const name=String(values.get('name')||'').trim();
+        if (!name) return notice('카테고리 이름을 입력하세요.',true);
+        if (data.categories.some(c=>c.name.toLocaleLowerCase()===name.toLocaleLowerCase())) return notice('같은 이름의 카테고리가 있습니다.',true);
+        const c={id:`c${Date.now()}`,name,description:String(values.get('description')||'').trim(),active:true};
+        data.categories.push(c); save(); view.page='category'; view.categoryId=c.id; view.preset=null; notice(`${name} 카테고리를 만들었습니다.`); return;
+      }
+      if (form.id==='task-form') {
+        const c=category(); if (!c?.active) return notice('카테고리를 활성화한 뒤 작업을 만드세요.',true);
+        const title=String(values.get('title')||'').trim(); if (!title) return notice('작업 제목을 입력하세요.',true);
+        data.tasks.push({id:`t${Date.now()}`,categoryId:c.id,title,status:'대기',detail:String(values.get('detail')||'').trim()}); save(); notice('작업을 만들었습니다.'); return;
+      }
+      if (form.id==='category-settings') {
+        const c=category(), name=String(values.get('name')||'').trim(); if (!c||!name) return notice('이름을 입력하세요.',true);
+        if (data.categories.some(x=>x.id!==c.id&&x.name.toLocaleLowerCase()===name.toLocaleLowerCase())) return notice('같은 이름의 카테고리가 있습니다.',true);
+        c.name=name; save(); notice('카테고리 이름을 저장했습니다.'); return;
+      }
+      if (form.id==='request-form') {
+        const body=String(values.get('text')||'').trim(); if (!body) return notice('내용을 입력하세요.',true);
+        if (view.requestMode!=='new'&&!view.selectedThread&&!view.selectedTask) return notice('대화 또는 작업을 먼저 선택하세요.',true);
+        data.requests.push({id:`r${Date.now()}`,mode:view.requestMode,threadId:view.selectedThread,taskId:view.selectedTask,body}); save(); notice('요청을 등록했습니다.'); return;
+      }
+    });
+
+    async function pickDirectory(categoryId) {
+      try {
+        if (window.controlCenterApi?.selectDirectory) {
+          const result=await window.controlCenterApi.selectDirectory();
+          if (result?.path) { addMaterial(categoryId,result.name || result.path.split(/[\\/]/).pop(),result.path); return; }
+        } else if (window.showDirectoryPicker) {
+          const handle=await window.showDirectoryPicker();
+          if (handle) { addMaterial(categoryId,handle.name,handle.name); return; }
+        } else {
+          const input=$('directory-fallback'); input.dataset.categoryId=categoryId; input.value=''; input.click(); return;
+        }
+      } catch (error) { if (error?.name!=='AbortError') notice('폴더 선택기를 열지 못했습니다.',true); }
+    }
+    function addMaterial(categoryId,name,path) {
+      data.materials.push({id:`m${Date.now()}`,categoryId,name,path}); save(); notice(`${name} 폴더를 자료로 등록했습니다.`);
+    }
+    $('directory-fallback').addEventListener('change', event => {
+      const files=event.target.files;
+      if (!files?.length) return;
+      const name=files[0].webkitRelativePath.split('/')[0] || '선택한 폴더';
+      addMaterial(event.target.dataset.categoryId,name,name);
+    });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshAgentStatus(); });
+    render();
+    refreshAgentStatus();
+    setInterval(() => { if (!document.hidden) refreshAgentStatus(); }, 15000);
+  </script>
+</body>
+</html>

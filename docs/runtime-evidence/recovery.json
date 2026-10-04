@@ -1,0 +1,276 @@
+[
+  {
+    "case": "shell_write_turn",
+    "time": 1790606133.581862,
+    "thread_id": "01a0e871-0de7-7fd3-92b0-0585b9501c09",
+    "turn_id": "01a0e871-0fb5-7842-8a71-cd22f855ffc8",
+    "elapsed_s": 14.713,
+    "events": {
+      "turn/started": 1,
+      "item/started": 4,
+      "item/completed": 4,
+      "item/agentMessage/delta": 11,
+      "thread/tokenUsage/updated": 2,
+      "turn/completed": 1
+    },
+    "terminal": {
+      "id": "01a0e871-0fb5-7842-8a71-cd22f855ffc8",
+      "status": "completed",
+      "error": null
+    },
+    "items": [
+      {
+        "method": "item/started",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Use only a shell command (not apply_patch) to write SHELL_WRITE_OK and a newline to shell.txt. Reply DONE.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e871-2f0a-7b12-aa34-44e0963cd0c6",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Use only a shell command (not apply_patch) to write SHELL_WRITE_OK and a newline to shell.txt. Reply DONE.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e871-2f0a-7b12-aa34-44e0963cd0c6",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_03636bc8174649c9016aba7b311b9c87d095105c6f68b0cddd",
+          "memoryCitation": null,
+          "phase": "commentary",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_03636bc8174649c9016aba7b311b9c87d095105c6f68b0cddd",
+          "memoryCitation": null,
+          "phase": "commentary",
+          "questions": null,
+          "text": "I’ll write shell.txt using a shell command.\n",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "aggregatedOutput": null,
+          "command": "/bin/zsh -lc \"printf 'SHELL_WRITE_OK\\\\n' > shell.txt\"",
+          "commandActions": [
+            {
+              "command": "printf 'SHELL_WRITE_OK\\n' > shell.txt",
+              "type": "unknown"
+            }
+          ],
+          "cwd": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-7p4eb8zd/work",
+          "durationMs": null,
+          "exitCode": null,
+          "id": "exec-ce429857-715b-45c2-a4a0-4a4db0049858",
+          "pluginId": null,
+          "processId": "24151",
+          "scriptPath": null,
+          "source": "unifiedExecStartup",
+          "status": "inProgress",
+          "type": "commandExecution"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "aggregatedOutput": null,
+          "command": "/bin/zsh -lc \"printf 'SHELL_WRITE_OK\\\\n' > shell.txt\"",
+          "commandActions": [
+            {
+              "command": "printf 'SHELL_WRITE_OK\\n' > shell.txt",
+              "type": "unknown"
+            }
+          ],
+          "cwd": "/private/var/folders/4r/9dg6h9r52d39wtrt20t0yrdc0000gn/T/ai-control-probe-7p4eb8zd/work",
+          "durationMs": 0,
+          "exitCode": 0,
+          "id": "exec-ce429857-715b-45c2-a4a0-4a4db0049858",
+          "pluginId": null,
+          "processId": "24151",
+          "scriptPath": null,
+          "source": "unifiedExecStartup",
+          "status": "completed",
+          "type": "commandExecution"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_03636bc8174649c9016aba7b35558087d0a1d8d1b4f5bfc94d",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_03636bc8174649c9016aba7b35558087d0a1d8d1b4f5bfc94d",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "DONE",
+          "type": "agentMessage"
+        }
+      }
+    ]
+  },
+  {
+    "case": "shell_file_on_disk",
+    "time": 1790606133.583192,
+    "exists": true,
+    "content": "SHELL_WRITE_OK\n"
+  },
+  {
+    "case": "close_while_active",
+    "time": 1790606139.164951,
+    "thread_id": "01a0e871-0de7-7fd3-92b0-0585b9501c09",
+    "turn_id": "01a0e871-4951-7941-83c5-3acd02142922"
+  },
+  {
+    "case": "closed_stream",
+    "time": 1790606139.2319202,
+    "error_type": "TransportClosedError",
+    "error": "Codex process closed stdout. stderr_tail=2026-09-28T14:35:39.191431Z ERROR codex_core::tools::router: error=exec_command failed: UnknownProcessId { process_id: 84755 }\n2026-09-28T14:35:39.197072Z ERROR codex_core::session: failed to record rollout items: thread 01a0e871-0de7-7fd3-92b0-0585b9501c09 not found"
+  },
+  {
+    "case": "active_close_history_before_resume",
+    "time": 1790606139.346587,
+    "status": {
+      "type": "notLoaded"
+    },
+    "turns": [
+      {
+        "id": "01a0e871-0fb5-7842-8a71-cd22f855ffc8",
+        "status": "completed"
+      },
+      {
+        "id": "01a0e871-4951-7941-83c5-3acd02142922",
+        "status": "interrupted"
+      }
+    ]
+  },
+  {
+    "case": "active_close_history_after_resume",
+    "time": 1790606139.440727,
+    "status": {
+      "type": "idle"
+    },
+    "turns": [
+      {
+        "id": "01a0e871-0fb5-7842-8a71-cd22f855ffc8",
+        "status": "completed"
+      },
+      {
+        "id": "01a0e871-4951-7941-83c5-3acd02142922",
+        "status": "interrupted"
+      }
+    ]
+  },
+  {
+    "case": "recovery_new_turn",
+    "time": 1790606148.1316679,
+    "thread_id": "01a0e871-0de7-7fd3-92b0-0585b9501c09",
+    "turn_id": "01a0e871-6035-7e20-bcf1-5c9898ab7fd0",
+    "elapsed_s": 8.675,
+    "events": {
+      "turn/started": 1,
+      "item/started": 2,
+      "item/completed": 2,
+      "item/agentMessage/delta": 5,
+      "thread/tokenUsage/updated": 1,
+      "turn/completed": 1
+    },
+    "terminal": {
+      "id": "01a0e871-6035-7e20-bcf1-5c9898ab7fd0",
+      "status": "completed",
+      "error": null
+    },
+    "items": [
+      {
+        "method": "item/started",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Reply RECOVERY_NEW_TURN only. No tools.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e871-7186-7210-9b87-1e3dd764841a",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "clientId": null,
+          "content": [
+            {
+              "text": "Reply RECOVERY_NEW_TURN only. No tools.",
+              "text_elements": [],
+              "type": "text"
+            }
+          ],
+          "id": "01a0e871-7186-7210-9b87-1e3dd764841a",
+          "type": "userMessage"
+        }
+      },
+      {
+        "method": "item/started",
+        "item": {
+          "delivery": null,
+          "id": "msg_0791f321b6f2f0c0016aba7b43afd087d09a7aef748e9ff8b7",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "",
+          "type": "agentMessage"
+        }
+      },
+      {
+        "method": "item/completed",
+        "item": {
+          "delivery": null,
+          "id": "msg_0791f321b6f2f0c0016aba7b43afd087d09a7aef748e9ff8b7",
+          "memoryCitation": null,
+          "phase": "final_answer",
+          "questions": null,
+          "text": "RECOVERY_NEW_TURN",
+          "type": "agentMessage"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,46 @@
+/Users/bagjeong-yong/Developer/AI_Contol_Center/.venv/lib/python3.10/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+test_artifact_modified_missing_and_symlink (test_phase1.Phase1Tests) ... ok
+test_changed_context_fails_preparation (test_phase1.Phase1Tests) ... ok
+test_duplicate_backend_lock (test_phase1.Phase1Tests) ... ok
+test_failure_preserves_partial (test_phase1.Phase1Tests) ... ok
+test_full_flow_and_resume (test_phase1.Phase1Tests) ... ok
+test_idempotency_retry_and_sse_replay (test_phase1.Phase1Tests) ... ok
+test_nested_artifacts_and_equal_bytes_preserved (test_phase1.Phase1Tests) ... ok
+test_queued_cancel (test_phase1.Phase1Tests) ... ok
+test_recovery_terminal_and_copy_before_commit (test_phase1.Phase1Tests) ... ok
+test_security_and_validation (test_phase1.Phase1Tests) ... ok
+test_steer_and_cancel_partial (test_phase1.Phase1Tests) ... ok
+test_unknown_outcome_blocks_until_proven (test_phase1.Phase1Tests) ... ok
+test_existing_clone_can_prepare_frozen_detached_commit (test_phase2.MigrationReviewTests) ... ok
+test_reserved_output_paths (test_phase2.MigrationReviewTests) ... ok
+test_scheduler_recovers_after_storage_failure (test_phase2.MigrationReviewTests) ... ok
+test_static_scripts_and_dom_ids (test_phase2.MigrationReviewTests) ... ok
+test_upgrade_creates_consistent_backup_before_migration (test_phase2.MigrationReviewTests) ... ok
+test_upgrade_preserves_phase1_rows_event_ids_and_fk (test_phase2.MigrationReviewTests) ... ok
+test_branch_keeps_frozen_revision_after_definition_edit (test_phase2.Phase2Tests) ... ok
+test_branch_preserves_original_and_records_revision (test_phase2.Phase2Tests) ... ok
+test_branch_rejects_duplicate_slots_and_markdown_contract_works (test_phase2.Phase2Tests) ... ok
+test_cancel_workflow_and_task_owned_api_guards (test_phase2.Phase2Tests) ... ok
+test_completed_run_cannot_bypass_missing_contract_on_recovery (test_phase2.Phase2Tests) ... ok
+test_completed_workflow_and_old_attempt_cannot_be_cancelled (test_phase2.Phase2Tests) ... ok
+test_cycle_validation_and_definition_crud (test_phase2.Phase2Tests) ... ok
+test_fork_adapter_new_thread (test_phase2.Phase2Tests) ... ok
+test_git_output_copy_interruption_can_recover_without_new_turn (test_phase2.Phase2Tests) ... ok
+test_git_worktrees_are_isolated_and_original_clean (test_phase2.Phase2Tests) ... ok
+test_handoff_lineage_model_selection_and_parallel_barrier (test_phase2.Phase2Tests) ... ok
+test_library_and_template_cross_work (test_phase2.Phase2Tests) ... ok
+test_library_filters_unavailable_and_unmapped_task_outputs (test_phase2.Phase2Tests) ... ok
+test_limit_one_keeps_other_ready_task_queued (test_phase2.Phase2Tests) ... ok
+test_missing_contract_blocks_downstream (test_phase2.Phase2Tests) ... ok
+test_retry_completes_all_inputs_after_partial_binding_failure (test_phase2.Phase2Tests) ... ok
+test_retry_preserves_attempts_and_reopens_workflow (test_phase2.Phase2Tests) ... ok
+test_retry_uses_snapshot_after_library_scope_change_and_original_loss (test_phase2.Phase2Tests) ... ok
+test_shared_slots_and_standalone_lane (test_phase2.Phase2Tests) ... ok
+test_template_unresolved_survives_save_reclone_and_reload (test_phase2.Phase2Tests) ... ok
+test_workflow_sse_replay (test_phase2.Phase2Tests) ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 15.825s
+
+OK
