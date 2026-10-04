@@ -77,6 +77,18 @@ class CodexGateway:
         self._status_cache = None
         self._status_at = 0
 
+    @staticmethod
+    def read_root_capability():
+        """The installed Codex app-server wire schema has no readable-root allowlist."""
+        import importlib.metadata
+        from openai_codex.generated.v2_all import ReadOnlySandboxPolicy, WorkspaceWriteSandboxPolicy
+        policies = (ReadOnlySandboxPolicy, WorkspaceWriteSandboxPolicy)
+        fields = {'readable_roots', 'readableRoots', 'read_roots', 'readRoots'}
+        supported = any(fields.intersection(policy.model_fields) for policy in policies)
+        version = importlib.metadata.version('openai-codex')
+        return {'supported': bool(supported), 'reason': None if supported else
+                f'설치된 Codex SDK {version}의 sandboxPolicy는 readable roots를 받지 않습니다. '
+                'workspaceWrite의 writableRoots는 읽기 전용 권한 경계를 만들지 않습니다.'}
     async def open(self):
         async with self._open_lock:
             if self.codex:
@@ -200,7 +212,11 @@ class CodexGateway:
             await client.close()
 
     async def thread(self, cwd, model, thread_id=None, *, settings=None, rules=None, execution_profile=None, ephemeral=False,
-                     research_read_network=False):
+                     research_read_network=False, requested_read_roots=None):
+        if requested_read_roots:
+            capability = self.read_root_capability()
+            raise ValueError('PROJECT_PATH_SCOPE_UNENFORCED: ' +
+                             (capability['reason'] or '읽기 Root 전달 기능은 아직 Gateway에 연결되지 않았습니다.'))
         profile = execution_profile or {}
         if research_read_network:
             if profile.get("permission") != "read-only" or thread_id:

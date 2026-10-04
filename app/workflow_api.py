@@ -197,6 +197,9 @@ async def start_managed_execution(workflow_id, body, http, *, schedule_fire_id=N
         data = definition(db, workflow_id)
         work = row(db, Work, data["work_id"])
         revision = data["revision"]
+        from .path_inputs import READ_SCOPE_ENFORCED
+        if not READ_SCOPE_ENFORCED and any(any(t["context_rule"].get(key) for key in ("path_patterns", "read_paths", "search_paths", "external_scopes")) for t in data["tasks"]):
+            raise HTTPException(409, "PROJECT_PATH_SCOPE_UNENFORCED: 현재 런타임은 선택한 프로젝트 경로 밖의 읽기를 차단할 수 없어 실행을 시작하지 않습니다.")
     catalog = await catalog_from(runner.gateway)
     git_commit = await asyncio.to_thread(baseline, work) if any(t["workspace_mode"] == "GIT_WORKTREE" for t in data["tasks"]) else None
     with COMMAND_LOCK, Session() as db:
@@ -231,7 +234,9 @@ async def start_managed_execution(workflow_id, body, http, *, schedule_fire_id=N
             source_ids.update(task["context_rule"]["source_ids"])
             artifact_ids.update(task["context_rule"]["artifact_ids"])
             artifact_ids.update(b["artifact_id"] for b in task["input_rule"] if b.get("artifact_id"))
+        from .root_scopes import roots
         snapshot = {"schema_version": 1, "tasks": data["tasks"], "workflow_context": body.model_dump(exclude={"expected_revision"}),
+                    "external_root_capabilities": roots(work),
                     "source_hashes": {sid: db.get(Source, sid).sha256 for sid in source_ids},
                     "artifact_hashes": {aid: db.get(Artifact, aid).sha256 for aid in artifact_ids}, "git_base_commit": git_commit,
                     "workspace_path": str(workspace_root(work))}

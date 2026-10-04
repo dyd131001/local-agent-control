@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 from types import SimpleNamespace
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 from fastapi import APIRouter, HTTPException, Request as HttpRequest
 from pydantic import Field, ValidationError
@@ -54,6 +54,23 @@ class ApprovalBody(StrictBody):
     expected_revision: int
 
 
+class PathPreviewBody(StrictBody):
+    patterns: list[str] = Field(min_length=1, max_length=100)
+    offset: int = Field(default=0, ge=0)
+    limit: int = Field(default=200, ge=1, le=500)
+
+
+class ScopePreviewBody(StrictBody):
+    external_root: str | None = None
+    discovery_only: bool = False
+    read_paths: list[str] = Field(default_factory=list, max_length=100)
+    search_paths: list[str] = Field(default_factory=list, max_length=100)
+    legacy_patterns: list[str] = Field(default_factory=list, max_length=100)
+    list_kind: Literal['READ', 'SEARCH', 'EXCLUDED', 'SYMLINK'] = 'READ'
+    offset: int = Field(default=0, ge=0)
+    limit: int = Field(default=200, ge=1, le=500)
+
+
 class EvidenceChange(StrictBody):
     expected_revision: int
     title: str = Field(min_length=1, max_length=200)
@@ -93,7 +110,90 @@ async def research_capabilities(work_id: str):
     return {'workspace_search':True,**web}
 
 
-def guidance(goal, models, defaults, materials=None, workspace_path=None):
+@router.post('/works/{work_id}/path-inputs/preview')
+def preview_path_inputs(work_id: str, body: PathPreviewBody):
+    from .path_inputs import selected_files
+    with Session() as db:
+        work = row(db, Work, work_id)
+        if not work.linked_workspace_path:
+            raise HTTPException(409, '연결된 프로젝트가 없습니다.')
+        root = Path(work.linked_workspace_path)
+    try:
+        paths = selected_files(root, body.patterns)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    from .path_inputs import READ_SCOPE_ENFORCED
+    return {'patterns': body.patterns, 'total': len(paths), 'offset': body.offset,
+            'paths': paths[body.offset:body.offset + body.limit],
+            'has_more': body.offset + body.limit < len(paths),
+            'read_scope_enforced': READ_SCOPE_ENFORCED}
+
+
+@router.get('/works/{work_id}/project-tree')
+def project_tree(work_id: str, path: str = '.', offset: int = 0, limit: int = 100, external_root: str | None = None):
+    from .path_inputs import browse_directory
+    from .root_scopes import registered
+    if offset < 0 or limit < 1 or limit > 500:
+        raise HTTPException(422, 'Invalid project tree page')
+    try:
+        with Session() as db:
+            work = row(db, Work, work_id)
+            if not work.linked_workspace_path and not external_root:
+                raise HTTPException(409, '연결된 프로젝트가 없습니다.')
+            root = Path(work.linked_workspace_path) if work.linked_workspace_path else None
+            custom = ()
+            if external_root:
+                root, permission = registered(work, external_root, 'browse')
+                custom = permission.get('ignore_patterns', [])
+        return browse_directory(root, path, offset, limit, custom)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+
+@router.post('/works/{work_id}/project-scopes/preview')
+def preview_project_scopes(work_id: str, body: ScopePreviewBody):
+    from .path_inputs import READ_SCOPE_ENFORCED, scope_preview
+    from .root_scopes import registered
+    if body.discovery_only and (not body.external_root or body.read_paths or body.legacy_patterns):
+        raise HTTPException(422, '탐색 전용 범위는 외부 폴더에만 사용할 수 있습니다.')
+    if not (body.read_paths or body.legacy_patterns or (body.external_root and body.discovery_only)):
+        raise HTTPException(422, '읽기 권한 범위를 선택하세요.')
+    try:
+        with Session() as db:
+            work = row(db, Work, work_id)
+            if not work.linked_workspace_path and not body.external_root:
+                raise HTTPException(409, '연결된 프로젝트가 없습니다.')
+            root = Path(work.linked_workspace_path) if work.linked_workspace_path else None
+            custom = ()
+            if body.external_root:
+                capability = 'browse' if body.discovery_only or body.search_paths else 'read'
+                root, permission = registered(work, body.external_root, capability)
+                if body.read_paths and not permission.get('read'):
+                    raise HTTPException(403, '이 Root에는 AI 읽기 권한이 없습니다.')
+                custom = permission.get('ignore_patterns', [])
+        result = scope_preview(root, body.read_paths or (['.'] if body.discovery_only else []), body.search_paths, body.legacy_patterns, custom)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    selected = result[{'READ': 'read_files', 'SEARCH': 'search_files',
+                       'EXCLUDED': 'excluded_files', 'SYMLINK': 'symlinks'}[body.list_kind]]
+    if body.external_root and not body.search_paths and body.list_kind == 'SEARCH':
+        selected = []
+    if body.list_kind == 'EXCLUDED':
+        selected = selected + result['ignored_locations']
+    if body.discovery_only and body.list_kind == 'READ':
+        selected = []
+    return {'root': str(root), 'read_paths': body.read_paths, 'search_paths': body.search_paths,
+            'legacy_patterns': body.legacy_patterns,
+            'read_count': 0 if body.discovery_only else len(result['read_files']),
+            'search_count': 0 if body.external_root and not body.search_paths else len(result['search_files']),
+            'excluded_count': len(result['excluded_files']) + len(result['ignored_locations']), 'symlink_count': len(result['symlinks']),
+            'list_kind': body.list_kind, 'offset': body.offset,
+            'paths': selected[body.offset:body.offset + body.limit],
+            'has_more': body.offset + body.limit < len(selected),
+            'read_scope_enforced': READ_SCOPE_ENFORCED}
+
+
+def guidance(goal, models, defaults, materials=None, workspace_path=None, external_roots=None):
     catalog = contract()
     # Request/response detail stays available in the shared catalog. The planner
     # only needs the executable definitions, keeping the Run instruction bounded.
@@ -114,6 +214,15 @@ def guidance(goal, models, defaults, materials=None, workspace_path=None):
             "independent tasks may run in parallel. Omit execution_profile/model/reasoning to inherit unless needed. "
             "Use only listed Runtime model and reasoning values. Prefer inherited defaults. "
             "Never invent Source, Resource, or Artifact IDs. Use only the verified material IDs listed below. "
+            "For source-code analysis in a linked Work project, default each Task context_rule.read_paths "
+            "and context_rule.search_paths to ['.'] for the whole linked project. "
+            "Propose exact project-relative folders or files when the task needs a narrower scope. "
+            "A selected folder includes its descendant files. "
+            "The search scope narrows filename discovery and never widens read permission. "
+            "For external local folders, use context_rule.external_scopes only for Registered External Roots below. "
+            "A Root with browse=true may supply search_paths; a Root with read=true may supply read_paths. "
+            "Never invent a filesystem Root or assume browse grants AI read. External Roots have no write access. "
+            "Do not require individual Source IDs or unresolved bindings for project files covered by read_paths. "
             "Use ARTIFACT_ONLY unless a linked Git project is explicitly required. "
             "Use schedule=null unless the goal explicitly specifies a future date or recurrence; "
             "do not invent a time. OutputRule paths, when used, must be relative. "
@@ -121,6 +230,7 @@ def guidance(goal, models, defaults, materials=None, workspace_path=None):
             "Available models: " + encode(available) + "\nResolved Work defaults: " + encode(defaults) +
             "\nVerified Work materials: " + encode(materials or []) +
             "\nWork Workspace (read on demand only): " + json.dumps(workspace_path,ensure_ascii=False) +
+            "\nRegistered External Roots: " + encode(external_roots or []) +
             "\nAPI contract: " + encode(brief) + "\nUser goal: " + json.dumps(goal, ensure_ascii=False))
 
 
@@ -220,7 +330,8 @@ def queue_plan_run(db, item, profile, models, defaults, http):
     known.update({("ARTIFACT",artifact.id):artifact.name for artifact in db.query(Artifact).filter(Artifact.id.in_(artifact_ids))})
     for (kind,key),name in known.items():
         if not any(part['id']==key for part in materials):materials.append({'type':kind,'id':key,'title':name})
-    instruction=guidance(item.goal,models,defaults,materials,str(workspace_root(work)))
+    from .root_scopes import roots
+    instruction=guidance(item.goal,models,defaults,materials,str(workspace_root(work)),roots(work))
     if len(instruction)>30000:raise ValueError('계획 요청이 너무 깁니다. 조사 자료를 줄여 주세요.')
     researched=bool(item.research_run_id and evidence)
     run=queue_run(db,row(db,Work,item.work_id),instruction,[] if researched else source_ids,None,None,http,

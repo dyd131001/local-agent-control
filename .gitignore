@@ -1,4 +1,6 @@
 .venv/
+.git/
+.dbstore/
 __pycache__/
 *.py[cod]
 .control-center-state/

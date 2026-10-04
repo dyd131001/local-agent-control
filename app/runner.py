@@ -284,6 +284,8 @@ class Runner:
                     await asyncio.to_thread(self.finish, run_id, "interrupted")
                     return
                 db.commit()
+            if manifest.get("project_path_inputs") and not manifest["project_path_inputs"].get("read_scope_enforced"):
+                raise ValueError("PROJECT_PATH_SCOPE_UNENFORCED: Codex Runtime cannot restrict reads to the selected project paths")
             if manifest.get("compact_requested"):
                 from .db import ThreadRecord
                 history = await self.gateway.read_thread(run.thread_id)
@@ -316,7 +318,8 @@ class Runner:
                 thread_id = await asyncio.wait_for(self.gateway.thread(manifest["cwd"], run.model, run.thread_id,
                                                                        settings=manifest["sandbox"], rules=manifest["developer_instructions"],
                                                                        execution_profile=manifest["execution_profile"], ephemeral=manifest.get("ephemeral", False),
-                                                                       research_read_network=manifest.get("research_read_network", False)), 30)
+                                                                       research_read_network=manifest.get("research_read_network", False),
+                                                                       requested_read_roots=manifest.get("project_path_inputs", {}).get("requested_runtime_read_roots")), 30)
             self.owned_threads[thread_id] = run_id
             manifest["thread_id"] = thread_id
             save_manifest(run_id, manifest)

@@ -41,10 +41,51 @@ class StrictBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class ExternalScope(StrictBody):
+    root: str = Field(min_length=2, max_length=1000)
+    read_paths: list[str] = Field(default_factory=list, max_length=100)
+    search_paths: list[str] = Field(default_factory=lambda: ['.'], max_length=100)
+
+    @model_validator(mode="after")
+    def paths(self):
+        from pathlib import Path
+        from .path_inputs import validate_selection
+        if not self.root.startswith('/') or '..' in Path(self.root).parts:
+            raise ValueError('External folder must be absolute without parent traversal')
+        for path in self.read_paths + self.search_paths:
+            validate_selection(path)
+        if len(self.read_paths) != len(set(self.read_paths)) or len(self.search_paths) != len(set(self.search_paths)):
+            raise ValueError('Duplicate external folder selection')
+        return self
+
+
 class ContextRule(StrictBody):
     inherit_workflow_context: bool = True
     source_ids: list[str] = Field(default_factory=list, max_length=100)
     artifact_ids: list[str] = Field(default_factory=list, max_length=100)
+    path_patterns: list[str] = Field(default_factory=list, max_length=100)
+    read_paths: list[str] = Field(default_factory=list, max_length=100)
+    search_paths: list[str] = Field(default_factory=list, max_length=100)
+    external_scopes: list[ExternalScope] = Field(default_factory=list, max_length=10)
+
+    @model_validator(mode="after")
+    def paths(self):
+        from .path_inputs import validate_pattern, validate_selection
+        for pattern in self.path_patterns:
+            validate_pattern(pattern)
+        if len(self.path_patterns) != len(set(self.path_patterns)):
+            raise ValueError("Duplicate project path pattern")
+        for path in self.read_paths + self.search_paths:
+            validate_selection(path)
+        if len(self.read_paths) != len(set(self.read_paths)) or len(self.search_paths) != len(set(self.search_paths)):
+            raise ValueError("Duplicate project scope selection")
+        if self.path_patterns and self.read_paths:
+            raise ValueError("Choose project folders or legacy path patterns, not both")
+        if self.search_paths and not (self.read_paths or self.path_patterns):
+            raise ValueError("Choose a read scope before a search scope")
+        if len({scope.root for scope in self.external_scopes}) != len(self.external_scopes):
+            raise ValueError('Duplicate external folder root')
+        return self
 
 
 class InputRule(StrictBody):
@@ -166,6 +207,27 @@ def validate_context(db, work, tasks, source_ids=(), artifact_ids=()):
         if t["workspace_mode"] == "GIT_WORKTREE" and not work.linked_workspace_path:
             raise ValueError("Git worktree requires a linked Git project")
         cr = t["context_rule"]
+        if any(cr.get(key) for key in ("path_patterns", "read_paths", "search_paths")) and not work.linked_workspace_path:
+            raise ValueError("Project path inputs require a linked Work project")
+        if any(cr.get(key) for key in ("path_patterns", "read_paths", "search_paths")):
+            from pathlib import Path
+            from .path_inputs import scope_preview
+            selected = scope_preview(Path(work.linked_workspace_path), cr.get("read_paths", []),
+                                     cr.get("search_paths", []), cr.get("path_patterns", []))
+            if not selected["read_files"] or not selected["search_files"]:
+                raise ValueError("Project read or search scope matches no regular files")
+        for external in cr.get('external_scopes', []):
+            from .path_inputs import scope_preview
+            from .root_scopes import registered
+            external_root, permission = registered(work, external['root'], 'read' if external['read_paths'] else 'browse')
+            if external['search_paths'] and not permission.get('browse'):
+                raise ValueError('Work에 탐색 권한이 없는 외부 Root입니다.')
+            if external['read_paths'] and not permission.get('read'):
+                raise ValueError('Work에 AI 읽기 권한이 없는 외부 Root입니다.')
+            selected = scope_preview(external_root, external['read_paths'] or ['.'], external['search_paths'],
+                                     custom=permission.get('ignore_patterns', []))
+            if (external['search_paths'] and not selected['search_files']) or (external['read_paths'] and not selected['read_files']):
+                raise ValueError('External search scope matches no regular files')
         ids = list(cr.get("source_ids", [])) + list(source_ids)
         if len(ids) != len(set(ids)) and len(set(cr.get("source_ids", []))) != len(cr.get("source_ids", [])):
             raise ValueError("Duplicate source IDs")

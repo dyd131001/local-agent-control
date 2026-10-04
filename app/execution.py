@@ -72,6 +72,52 @@ def prepare_execution(work, run, request, sources):
                                    "include_mode":mode,"delivery": "inline" if mode=='FULL' else "reference", "scope": "artifact"})
     manifest["files"].extend(artifact_files)
     if spec:
+        context_rule = spec.get("context_rule", {})
+        patterns = context_rule.get("path_patterns", [])
+        read_paths = context_rule.get("read_paths", [])
+        search_paths = context_rule.get("search_paths", [])
+        external_scopes = context_rule.get('external_scopes', [])
+        if patterns or read_paths or search_paths or external_scopes:
+            from .path_inputs import READ_SCOPE_ENFORCED, scope_preview
+            from .root_scopes import registered, roots
+            if external_scopes and snap.get('external_root_capabilities') != roots(work):
+                raise ValueError('Work External Root 권한이 Run snapshot 이후 변경되었습니다.')
+            if (patterns or read_paths or search_paths) and not work.linked_workspace_path:
+                raise ValueError("Project path inputs require a linked Work project")
+            selected = scope_preview(Path(work.linked_workspace_path), read_paths, search_paths, patterns) if (patterns or read_paths or search_paths) else {'read_files': [], 'search_files': []}
+            if (patterns or read_paths or search_paths) and (not selected["read_files"] or not selected["search_files"]):
+                raise ValueError("Project read or search scope matches no regular files")
+            external_inputs = []
+            for external in external_scopes:
+                root_path, permission = registered(work, external['root'], 'read' if external['read_paths'] else 'browse')
+                if external['search_paths'] and not permission.get('browse'):
+                    raise ValueError('Work에 탐색 권한이 없는 외부 Root입니다.')
+                if external['read_paths'] and not permission.get('read'):
+                    raise ValueError('Work에 AI 읽기 권한이 없는 외부 Root입니다.')
+                chosen = scope_preview(root_path, external['read_paths'] or ['.'], external['search_paths'],
+                                       custom=permission.get('ignore_patterns', []))
+                if external['search_paths'] and not chosen['search_files']:
+                    raise ValueError('External search scope matches no regular files')
+                external_inputs.append({'root': str(root_path), 'browse': bool(external['search_paths']), 'read': bool(external['read_paths']),
+                                        'write': False, 'read_paths': external['read_paths'],
+                                        'search_paths': external['search_paths'],
+                                        'files': chosen['read_files'] if external['read_paths'] else [],
+                                        'search_index': chosen['search_files'] if external['search_paths'] else []})
+            manifest["project_path_inputs"] = {"root": work.linked_workspace_path,
+                                               "primary_workspace": work.linked_workspace_path,
+                                               "requested_runtime_read_roots":
+                                                   ([{"root": work.linked_workspace_path,
+                                                      "paths": read_paths or patterns,
+                                                      "write_policy": "existing_work_workspace"}]
+                                                    if patterns or read_paths else []) +
+                                                   [{"root": item['root'], "paths": item['read_paths'], "write": False}
+                                                    for item in external_inputs if item['read']],
+                                               "legacy_patterns": patterns,
+                                               "read_paths": read_paths, "search_paths": search_paths,
+                                               "files": selected["read_files"],
+                                               "search_index": selected["search_files"],
+                                               "external_scopes": external_inputs,
+                                               "read_scope_enforced": READ_SCOPE_ENFORCED}
         if snap.get("checkpoint_id"):
             manifest["checkpoint_id"] = snap["checkpoint_id"]
         manifest.update(schema_version=2, workflow_run_id=wr.id, task_run_id=task.id,
@@ -122,6 +168,9 @@ def prepare_execution(work, run, request, sources):
                            for f in manifest['files'] if f.get('include_mode')=='FULL')
     contract = "\n".join(f"- {o['output_key']}: {o['path']} ({'required' if o['required'] else 'optional'})" for o in manifest.get("output_rule", []) if not o.get("system"))
     manifest["prompt"] = request.instruction + "\n\nSelected input references:\n" + (files or "(none)") + ("\n"+refs if refs else "") + ("\nDuplicate references:\n"+aliases if aliases else "") + ("\n\nSmall inline text:\n"+full_text if full_text else "") + "\n\nWorkspace: " + manifest["cwd"] + "\nPermission: " + manifest["execution_profile"]["permission"] + ("\nReturn JSON only; no files are required." if flow_config.get('flow_plan_stage') in {'RESEARCH','PLAN'} else "\nDeliverables directory: " + manifest["output_root"] + "\nOutput contract:\n" + (contract or "No required files."))
+    if manifest.get("project_path_inputs"):
+        scope = manifest["project_path_inputs"]
+        manifest["prompt"] += f"\nProject read scope: {len(scope['files'])} files; filename search scope: {len(scope['search_index'])} files."
     reader_command=(f"{shlex.quote(sys.executable)} {shlex.quote(str(Path(__file__).with_name('context_reader.py')))} "
                     f"--manifest {shlex.quote(str(root / 'runs' / run.id / 'context-inputs.json'))} "
                     "--id SELECTED_ID --query 'search terms'")

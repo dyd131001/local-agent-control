@@ -76,13 +76,14 @@ async function selectWork(id, preserve = false) {
   $('work-paths').textContent = detail.work.workspace_path || detail.work.linked_workspace_path || detail.work.path;
   $('work-storage-details').innerHTML = [['저장 방식',detail.work.storage_layout==='EXTERNAL'?'외부 Workspace 연결':'기존 저장 구조'],['기존 호환 경로',detail.work.path],['내부 상태 · 시스템 관리',state.storage?.state_root],['공용 산출물 · Publish 저장',state.storage?.shared_root]].map(([label,value])=>`<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('');
   $('linked-import').hidden = !detail.work.linked_workspace_path;
+  window.projectPathInputs?.loadWork(id, !!detail.work.linked_workspace_path);
   $('archive-work').textContent = detail.work.archived ? '보관 해제' : '보관';
   $('overview').hidden = true; $('work-view').hidden = false;
   $('context-list').replaceChildren();
   for (const source of detail.sources) {
     const download=document.createElement('a');download.href='/api/sources/'+encodeURIComponent(source.id)+'/download';download.download='';download.textContent='다운로드';download.setAttribute('aria-label',source.name+' 다운로드');UI.actionStyle(download);
     const label=UI.selectable({title:source.name,value:source.id,selected:preserve?checked.includes(source.id):source.is_context,
-      metadata:[['출처',{LEGACY:'기존 자료',WORKSPACE:'Workspace',SHARED:'Shared',EXTERNAL:'External'}[source.location_type]||'기존 자료'],['파일',source.relative_path,'path'],['크기',UI.fileSize(source.size)],['실행 Context',defaultContextPolicy(source)]],actions:[download]});label.dataset.sourceGroup=source.location_type||'LEGACY';
+      metadata:[['출처',{LEGACY:'기존 자료',WORKSPACE:'Workspace',SHARED:'Shared',EXTERNAL:'External'}[source.location_type]||'기존 자료'],['Source ID',source.id],['파일',source.relative_path,'path'],['크기',UI.fileSize(source.size)],['실행 Context',defaultContextPolicy(source)]],actions:[download]});label.dataset.sourceGroup=source.location_type||'LEGACY';
     $('context-list').append(label);
   }
   if (!detail.sources.length) $('context-list').replaceChildren(UI.empty('등록된 자료가 없습니다.','Workspace 자료를 추가한 뒤 실행에 사용할 항목을 선택하세요.'));

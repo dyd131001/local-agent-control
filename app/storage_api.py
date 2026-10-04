@@ -24,7 +24,14 @@ class WorkspaceBody(StorageBody):
 
 
 class FolderPickerBody(StorageBody):
-    purpose: Literal["WORKSPACE", "PARENT"] = "WORKSPACE"
+    purpose: Literal["WORKSPACE", "PARENT", "EXTERNAL"] = "WORKSPACE"
+
+
+class ExternalRootBody(StorageBody):
+    path: str
+    browse: bool = True
+    read: bool = False
+    ignore_patterns: list[str] = Field(default_factory=list, max_length=100)
 
 
 class ExternalBody(StorageBody):
@@ -40,6 +47,11 @@ class DocumentBody(StorageBody):
 class ArtifactBody(StorageBody):
     location_type: Literal["WORKSPACE", "EXTERNAL"] = "WORKSPACE"
     path: str
+
+
+class FolderArtifactBody(StorageBody):
+    root: str
+    paths: list[str] = Field(min_length=1, max_length=100)
 
 
 def active_work(db, work_id):
@@ -77,12 +89,46 @@ def pick_folder(body: FolderPickerBody = FolderPickerBody()):
     if result.returncode:
         if "-128" in result.stderr: return {"path": None}
         raise HTTPException(422, "폴더 선택기를 열 수 없습니다. 경로를 직접 입력할 수 있습니다.")
+    if body.purpose == 'EXTERNAL':
+        from .path_inputs import validate_external_root
+        try:
+            return {"path": str(validate_external_root(result.stdout.strip()))}
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
     if body.purpose == 'PARENT':
         parent = Path(result.stdout.strip()).expanduser().resolve(strict=True)
         if not parent.is_dir() or any(parent == p or parent.is_relative_to(p) for p in (STATE_DIR, DATA_DIR, RUNTIME_DIR)):
             raise HTTPException(422, "Workspace 생성 위치로 사용할 수 없는 폴더입니다.")
         return {"path": str(parent)}
     return {"path": str(validate_workspace(result.stdout.strip()))}
+
+
+@router.get('/works/{work_id}/external-roots')
+def list_external_roots(work_id: str):
+    from .root_scopes import roots
+    with Session() as db:
+        return roots(row(db, Work, work_id))
+
+
+@router.get('/runtime/read-root-capability')
+def read_root_capability():
+    from .gateway import CodexGateway
+    return CodexGateway.read_root_capability()
+
+
+@router.post('/works/{work_id}/external-roots', status_code=201)
+def set_external_root(work_id: str, body: ExternalRootBody):
+    from .root_scopes import add
+    from .path_inputs import validate_ignore_pattern
+    try:
+        patterns = [validate_ignore_pattern(value) for value in body.ignore_patterns]
+        with COMMAND_LOCK, Session() as db:
+            work = active_work(db, work_id)
+            item = add(work, body.path, body.browse, body.read, patterns)
+            db.commit()
+            return item
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
 
 
 @router.put("/works/{work_id}/workspace")
@@ -245,3 +291,85 @@ def register_artifact(work_id: str, body: ArtifactBody):
         db.add(artifact)
         db.commit()
         return dump(artifact)
+
+
+@router.post('/works/{work_id}/artifacts/folder', status_code=201)
+def register_folder_artifact(work_id: str, body: FolderArtifactBody):
+    """Freeze selected external files as one archive with their relative paths."""
+    import io
+    import json
+    import zipfile
+    from .config import ARTIFACT_LIMIT
+    from .db import now
+    from .path_inputs import scope_preview
+    from .root_scopes import registered
+    from .run_service import create_run
+    from .storage import runtime_root
+    from .workspace import ident, safe_read, sha
+    with Session() as db:
+        work = active_work(db, work_id)
+        try:
+            root, permission = registered(work, body.root, 'browse')
+            if not permission.get('read'):
+                raise ValueError('Bundle Artifact를 만들려면 이 Root의 AI 읽기 권한이 필요합니다.')
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+    selected = scope_preview(root, body.paths, body.paths, custom=permission.get('ignore_patterns', []))
+    files = selected['search_files']
+    if not files or len(files) > 1000:
+        raise HTTPException(422, '선택한 폴더의 파일은 1~1000개여야 합니다.')
+    memory = io.BytesIO()
+    total = 0
+    included = []
+    created = now().isoformat()
+    with zipfile.ZipFile(memory, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
+        for relative in files:
+            if relative == '__control_center_bundle__/manifest.json':
+                raise HTTPException(422, '묶음 manifest 경로와 같은 파일은 선택할 수 없습니다.')
+            data = safe_read(root, relative, ARTIFACT_LIMIT)
+            total += len(data)
+            if total > ARTIFACT_LIMIT:
+                raise HTTPException(422, '선택한 폴더의 파일 합계가 64MB를 초과합니다.')
+            archive.writestr(relative, data)
+            included.append({'path': relative, 'size': len(data), 'sha256': sha(data)})
+        manifest = {'version': 1, 'root': str(root), 'selected_paths': body.paths,
+                    'included_files': included, 'excluded_files': selected['excluded_files'],
+                    'ignored_locations': selected['ignored_locations'],
+                    'symlinks_not_followed': selected['symlinks'], 'created_at': created}
+        archive.writestr('__control_center_bundle__/manifest.json',
+                         json.dumps(manifest, ensure_ascii=False, separators=(',', ':')))
+    content = memory.getvalue()
+    if len(content) > ARTIFACT_LIMIT:
+        raise HTTPException(422, '묶음 Artifact가 64MB를 초과합니다.')
+    with COMMAND_LOCK, Session() as db:
+        work = active_work(db, work_id)
+        archive_id = ident('folder')
+        storage = runtime_root(work) / 'manual-inputs' / archive_id
+        storage.mkdir(parents=True, exist_ok=False)
+        target = storage / 'selected-files.zip'
+        try:
+            with target.open('xb') as output:
+                output.write(content)
+                output.flush()
+                os.fsync(output.fileno())
+            run = create_run(db, work.id, 'Register selected folder files: ' + str(root), [], [],
+                             'manual', 'none', operation='reference')
+            run.status = run.phase = 'COMPLETED'
+            run.completed_at, run.artifact_state = now(), 'READY'
+            artifact = Artifact(id=ident('art'), work_id=work.id, run_id=run.id,
+                                name='selected-files.zip', candidate_path='selected-files.zip',
+                                relative_path='selected-files.zip', location_type='EXTERNAL',
+                                location_root=str(storage), origin_path=str(root),
+                                content_type='application/zip', size=len(content), sha256=sha(content),
+                                partial=False, availability='AVAILABLE')
+            db.add(artifact)
+            db.commit()
+            result = dump(artifact)
+            result['file_count'] = len(files)
+            result['symlink_count'] = len(selected['symlinks'])
+            result['bundle_manifest'] = manifest
+            return result
+        except BaseException:
+            target.unlink(missing_ok=True)
+            storage.rmdir()
+            raise

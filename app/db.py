@@ -63,6 +63,7 @@ class Work(Base):
     path: Mapped[str] = mapped_column(Text, unique=True)
     workspace_kind: Mapped[str] = mapped_column(String, default="MANAGED", server_default="MANAGED")
     linked_workspace_path: Mapped[str | None] = mapped_column(Text, nullable=True)
+    external_roots: Mapped[str] = mapped_column(Text, default="[]", server_default="[]")
     storage_layout: Mapped[str] = mapped_column(String, default="LEGACY", server_default="LEGACY")
     workspace_path: Mapped[str | None] = mapped_column(Text, nullable=True, unique=True)
     provision_state: Mapped[str] = mapped_column(String, default="PROVISIONING")

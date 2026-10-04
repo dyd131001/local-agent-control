@@ -59,6 +59,7 @@ window.flowPlans = (() => {
     row.innerHTML=`<div class="panel-heading"><h3>작업 ${index+1}</h3><button type="button" data-remove-task>삭제</button></div>
       <label>이름<input data-field="name" value="${escape(task.name)}"></label>
       <label>실행 지시<textarea data-field="instruction" rows="5">${escape(task.instruction)}</textarea></label>
+      <p class="ui-help">프로젝트 읽기·탐색 범위는 Workflow 탭의 파일시스템 탐색기에서 확인하고 수정합니다.</p>
       <div class="flow-plan-task-options"><label>모델<select data-field="model"><option value="">상속</option>${models}</select></label>
       <label>Reasoning<select data-field="reasoning"><option value="">상속</option>${reasonings.map(x=>`<option value="${escape(x)}" ${chosenReasoning===x?'selected':''}>${escape(x)}</option>`).join('')}</select></label>
       <label>권한<select data-field="permission"><option value="">상속</option><option value="read-only" ${profile.permission==='read-only'?'selected':''}>읽기 전용</option><option value="workspace-write" ${profile.permission==='workspace-write'?'selected':''}>Workspace 쓰기</option></select></label>
@@ -80,6 +81,7 @@ window.flowPlans = (() => {
     $('flow-plan-edit-interval').value=editing.schedule?.interval_minutes||60;
     $('flow-plan-task-editor').replaceChildren(...(editing.workflow?.tasks||[]).map(taskCard));
     $('flow-plan-json').value=JSON.stringify(editing,null,2);
+    renderUnresolved();
   }
   function readEditor(){
     if(!editing)return;
@@ -95,6 +97,7 @@ window.flowPlans = (() => {
       const speed=row.querySelector('[data-field="speed"]').value||null;
       task.execution_profile=task.model||task.reasoning||permission||speed?{model:task.model,reasoning:task.reasoning,permission,speed}:null;
       task.depends_on=[...row.querySelectorAll('[data-dep]:checked')].map(x=>x.dataset.dep);
+      task.context_rule=task.context_rule||{inherit_workflow_context:true,source_ids:[],artifact_ids:[]};
     }
     const kind=$('flow-plan-edit-schedule-kind').value;
     if(kind==='NONE')editing.schedule=null;
@@ -107,6 +110,13 @@ window.flowPlans = (() => {
         source_ids:editing.schedule?.source_ids||[],artifact_ids:editing.schedule?.artifact_ids||[]};
     }
     return editing;
+  }
+  function renderUnresolved(){
+    const root=$('flow-plan-unresolved'),pending=editing?.workflow?.unresolved_bindings||[];
+    root.hidden=!pending.length;root.replaceChildren();
+    if(!pending.length)return;
+    const heading=document.createElement('strong');heading.textContent=`미해결 연결 ${pending.length}건 · Workflow 탭의 해당 작업에서 해결하거나 제외하세요.`;root.append(heading);
+    for(const binding of pending){const p=document.createElement('p');p.textContent=binding.title||binding.name||binding.reference_path||binding.reason||'참고 자료';root.append(p);}
   }
   function renderList(plans){
     const root=$('flow-plan-list');root.replaceChildren();
@@ -147,8 +157,10 @@ window.flowPlans = (() => {
     const sched=plan.installed_schedule||plan.plan?.schedule;
     $('flow-plan-schedule-summary').replaceChildren(UI.metadata([['작업',tasks.length?`${tasks.length}개`:'초안 생성 중'],['예약',sched?`${sched.kind==='RECURRING'?'반복':'한 번'} · ${date(sched.next_fire_at||sched.start_at)}`:'없음'],['상태',plan.status==='APPROVED'?'시스템 연결 완료':'승인 전']]));
     $('flow-plan-schedule-summary').hidden=!plan.plan;
-    $('flow-plan-approve').hidden=plan.status!=='DRAFT'||!plan.plan;
-    $('flow-plan-open-workflow').hidden=!plan.workflow_definition_id;
+    $('flow-plan-approve').hidden=true;
+    $('flow-plan-open-workflow').hidden=!(plan.status==='DRAFT'&&plan.plan)&&!plan.workflow_definition_id;
+    $('flow-plan-open-workflow').textContent=plan.workflow_definition_id?'발행된 Workflow 보기':'Workflow 탭에서 초안 검토·편집';
+    $('flow-plan-workflow-help').hidden=plan.status!=='DRAFT'||!plan.plan;
     $('flow-plan-open-schedule').hidden=!plan.schedule_id;
     $('flow-plan-open-run').hidden=!plan.generation_run_id;
     $('flow-plan-open-research-run').hidden=!plan.research_run_id;
@@ -158,10 +170,10 @@ window.flowPlans = (() => {
     $('flow-plan-extend-research').hidden=plan.status!=='REVIEW_LIMIT'||plan.research_budget_level>=3;
     $('flow-plan-regenerate').hidden=!plan.evidence?.length||['RESEARCHING','GENERATING','APPROVED','REVIEW_LIMIT'].includes(plan.status);
     $('flow-plan-draft-heading').hidden=['RESEARCHING','NO_SOURCES','REVIEW_LIMIT'].includes(plan.status);
-    $('flow-plan-editor').hidden=['APPROVED','RESEARCHING','GENERATING','NO_SOURCES','NEEDS_REPLAN','REVIEW_LIMIT'].includes(plan.status);
+    $('flow-plan-editor').hidden=['DRAFT','APPROVED','RESEARCHING','GENERATING','NO_SOURCES','NEEDS_REPLAN','REVIEW_LIMIT'].includes(plan.status);
     editing=plan.plan?structuredClone(plan.plan):null;
     if(editing)renderEditor();
-    else $('flow-plan-json').value=plan.generation_run?.final_text||'';
+    else {$('flow-plan-json').value=plan.generation_run?.final_text||'';$('flow-plan-unresolved').hidden=true;}
     if(plan.status==='INVALID'||plan.status==='FAILED')$('flow-plan-editor').open=true;
     schedulePoll();
   }
@@ -193,9 +205,9 @@ window.flowPlans = (() => {
   $('flow-plan-search').oninput=()=>renderList(allPlans);
   $('flow-plan-save').onclick=()=>save().catch(e=>notice(e.message));
   $('flow-plan-approve').onclick=()=>approve().catch(e=>notice(e.message));
-  $('flow-plan-add-task').onclick=()=>{if(!editing)return;readEditor();const id='task_'+crypto.randomUUID().replaceAll('-','').slice(0,12);editing.workflow.tasks.push({id,name:'새 작업',instruction:'수행할 작업을 구체적으로 작성하세요.',runtime:'CODEX',model:null,reasoning:null,execution_profile:null,review_policy:'AUTO',context_rule:{inherit_workflow_context:true,source_ids:[],artifact_ids:[]},input_rule:[],output_rule:[],workspace_mode:'ARTIFACT_ONLY',display_order:editing.workflow.tasks.length,depends_on:[]});renderEditor();};
+  $('flow-plan-add-task').onclick=()=>{if(!editing)return;readEditor();const id='task_'+crypto.randomUUID().replaceAll('-','').slice(0,12),linked=!!state.work?.linked_workspace_path;editing.workflow.tasks.push({id,name:'새 작업',instruction:'수행할 작업을 구체적으로 작성하세요.',runtime:'CODEX',model:null,reasoning:null,execution_profile:null,review_policy:'AUTO',context_rule:{inherit_workflow_context:true,source_ids:[],artifact_ids:[],path_patterns:[],read_paths:linked?['.']:[],search_paths:linked?['.']:[]},input_rule:[],output_rule:[],workspace_mode:'ARTIFACT_ONLY',display_order:editing.workflow.tasks.length,depends_on:[]});renderEditor();};
   $('flow-plan-apply-json').onclick=()=>{try{editing=JSON.parse($('flow-plan-json').value);renderEditor();notice('JSON을 편집 양식에 적용했습니다. 저장을 눌러 검증하세요.');}catch(e){notice(e.message);}};
-  $('flow-plan-open-workflow').onclick=async()=>{if(!selected?.workflow_definition_id)return;window.controlCenter.tab('workflow');await wfSelectDefinition(selected.workflow_definition_id);wfOpenEditor(wfState.definition);};
+  $('flow-plan-open-workflow').onclick=async()=>{try{if(!selected)return;window.controlCenter.tab('workflow');if(selected.workflow_definition_id)await wfSelectDefinition(selected.workflow_definition_id);else await window.workflows.openDraft(selected.id);}catch(e){notice(e.message);}};
   $('flow-plan-open-schedule').onclick=async()=>{if(!selected?.schedule_id)return;window.controlCenter.tab('schedule');await window.workflowOperations.loadWork(workId);await window.workflowOperations.openSchedule(selected.schedule_id);};
   $('flow-plan-open-run').onclick=async()=>{if(!selected?.generation_run_id)return;window.controlCenter.tab('execution');await selectRun(selected.generation_run_id);};
   $('flow-plan-catalog-download').onclick=async()=>{try{if(!catalog)await showCatalog();const blob=new Blob([JSON.stringify(catalog,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`control-center-api-contract-${catalog.version}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(e){notice(e.message);}};
